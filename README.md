@@ -9,8 +9,6 @@
 |---|---|
 | [`DuckVisual`](DuckVisual) | мод для Fabric 1.21.4: 61 функция, своё меню, HUD, эффекты (Java) |
 | [`DuckLauncher`](DuckLauncher) | лаунчер: Java, Minecraft, Fabric, моды для FPS, каталог модов, серверы (Go + WebView2) |
-| [`DuckSite`](DuckSite) | сайт проекта (один HTML-файл) |
-| [`DuckBot`](DuckBot) | Telegram-бот для донатов звёздами (Go) |
 
 > Duck Visual и Duck Launcher не являются продуктами Mojang AB и не связаны с Mojang AB или Microsoft.
 > Minecraft — товарный знак Mojang AB.
