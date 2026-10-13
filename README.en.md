@@ -46,11 +46,13 @@ The interface is in Russian; module names are in English.
 </tr>
 </table>
 
-**62 modules**, all configurable and bindable:
+**65 modules**, all configurable and bindable:
 
 | Combat | Players & world | HUD | Style |
 |---|---|---|---|
 | TargetESP · Trajectories · CritIndicator · DamageIndicators · Hitmarker · HitParticles · KillEffects · TargetCircle | Nametags · HealthTags · GlowESP · BoxESP · Tracers · ChinaHat · JumpCircles · CustomSky · WorldParticles | Watermark · ArrayList · TargetHud · **Music** · Cooldowns · Potions · Keybinds · ArmorHud · TabList | 26 palettes · Montserrat font · Duck-styled Minecraft UI · Freelook · Zoom · MotionBlur · **Saturation** |
+
+👕 **Cosmetics:** 16 capes, 9 masks and 8 PvP skins (or your own PNG) in Duck style. Pick them in the **wardrobe** on [duckvisual.ru](https://duckvisual.ru/wardrobe.php) or right in the launcher, and every player with Duck Visual sees them, even on offline-mode servers.
 
 🎵 **Music HUD** shows what is playing in your browser (YouTube, SoundCloud and more), Spotify and other players.
 
@@ -70,6 +72,8 @@ The interface is in Russian; module names are in English.
 - **"Potato" profile** for the weakest PCs (picked automatically on 4 GB RAM or two cores): on a GPU-less test the average FPS went from 5-6 to 26-27.
 - **Crash doctor** explains why the game closed and fixes it in one click. Discrete GPU on laptops; the modded game starts in about 20 seconds.
 - **Mods catalog** for Modrinth and CurseForge with automatic dependencies.
+- **Wardrobe:** capes, masks and skins from the site, sign in with a duckvisual.ru account, upload your own skin.
+- **Duck PvP resource pack** with one switch: short swords, low fire, a clean hotbar and crosshair, orange enchantment glint, a duck totem.
 - **Offline accounts** or **Ely.by** (skins).
 - **Duck Server** `n1.pg19.su:25795` is already in the server list.
 

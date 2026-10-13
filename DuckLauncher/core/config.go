@@ -27,6 +27,9 @@ type Config struct {
 	AfterLaunch string          `json:"afterLaunch"` // "keep", "minimize", "close"
 	JVMArgs     string          `json:"jvmArgs"`
 	CFKey       string          `json:"cfKey"` // CurseForge API key for the mods catalog
+	PvPPack     bool            `json:"pvpPack"`   // Duck PvP resource pack on 1.21.4
+	SiteToken   string          `json:"siteToken"` // duckvisual.ru account for the wardrobe
+	SiteLogin   string          `json:"siteLogin"`
 
 	// QuickJoin is a server address to connect to right after start (not saved).
 	QuickJoin string `json:"-"`

@@ -44,11 +44,13 @@
 </tr>
 </table>
 
-**62 функции**, все можно настроить и забиндить:
+**65 функций**, все можно настроить и забиндить:
 
 | Бой | Игроки и мир | HUD | Стиль |
 |---|---|---|---|
 | TargetESP · Trajectories · CritIndicator · DamageIndicators · Hitmarker · HitParticles · KillEffects · TargetCircle | Nametags · HealthTags · GlowESP · BoxESP · Tracers · ChinaHat · JumpCircles · CustomSky · WorldParticles | Watermark · ArrayList · TargetHud · **Music** · Cooldowns · Potions · Keybinds · ArmorHud · TabList | 26 палитр · шрифт Montserrat · меню Minecraft в стиле Duck · Freelook · Zoom · MotionBlur · **Saturation** |
+
+👕 **Косметика:** 16 плащей, 9 масок и 8 PvP-скинов (или свой PNG) в стиле Duck. Выбираешь в **гардеробе** на [duckvisual.ru](https://duckvisual.ru/wardrobe.php) или прямо в лаунчере, и тебя в них видят все игроки с Duck Visual, даже на пиратских серверах.
 
 🎵 **Music HUD** показывает, что играет в браузере (YouTube, Яндекс Музыка, VK, SoundCloud), Spotify и других плеерах.
 
@@ -68,6 +70,8 @@
 - **Профиль «Тапок»** для самых слабых ПК (включается сам на 4 ГБ ОЗУ или двух ядрах): в тесте без видеокарты FPS вырос с 5–6 до 26–27.
 - **Доктор вылетов:** объясняет по-русски, почему закрылась игра, и чинит в один клик. Мощная видеокарта на ноутбуках, запуск игры с модами примерно за 20 секунд.
 - **Каталог модов** Modrinth и CurseForge прямо в лаунчере, нужные библиотеки ставятся сами.
+- **Гардероб:** плащи, маски и скины с сайта, вход аккаунтом duckvisual.ru, загрузка своего скина.
+- **Ресурспак Duck PvP** включается одной кнопкой: короткие мечи, низкий огонь, свой хотбар и прицел, оранжевое свечение зачарований, тотем-утка.
 - **Вход без лицензии** или через **Ely.by** (скины).
 - **Duck Server** `n1.pg19.su:25795` уже в списке серверов.
 

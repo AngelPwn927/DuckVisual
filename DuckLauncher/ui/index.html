@@ -129,6 +129,41 @@
   .feat p { color: var(--sub); font-size: 13px; line-height: 1.5; }
 
 
+  [hidden] { display: none !important; }
+
+  /* wardrobe */
+  .whead { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .whead h2 { margin: 0; flex: 1; }
+  .wme { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: 12px; padding: 6px 6px 6px 12px; font-size: 13px; }
+  .wme small { color: var(--sub); }
+  .wbody { flex: 1; display: flex; gap: 14px; min-height: 0; }
+  .wleft { width: 236px; flex: none; display: flex; flex-direction: column; gap: 10px; }
+  .stage { background: radial-gradient(closest-side, rgba(255,160,40,.16), transparent), var(--card); border-radius: 14px; padding: 10px; text-align: center; }
+  .stage canvas { width: 216px; height: 188px; display: block; }
+  .stage small { display: block; color: var(--sub); font-size: 11px; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wleft .card { margin: 0; padding: 12px 14px; }
+  .wleft .row small { font-size: 11px; }
+  .wright { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .wtabs { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .wtabs .seg { flex: none; }
+  .wtabs .hint { margin: 0 0 0 auto; color: var(--sub); font-size: 12px; }
+  .wgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; align-content: start; }
+  .witem { background: var(--card); border: 2px solid transparent; border-radius: 12px; padding: 8px 6px 7px; text-align: center; transition: transform .12s, border-color .12s; }
+  .witem:hover { transform: translateY(-2px); background: var(--card2); }
+  .witem.on { border-color: var(--accent1); background: linear-gradient(180deg, rgba(255,212,59,.1), var(--card)); }
+  .witem canvas { width: 88px; height: 88px; display: block; margin: 0 auto; }
+  .witem .none { width: 88px; height: 88px; margin: 0 auto; display: grid; place-items: center; font-size: 30px; color: #55555f; }
+  .witem b { display: block; font-size: 12px; font-weight: 600; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .witem small { font-size: 9.5px; text-transform: uppercase; letter-spacing: .5px; }
+  .r-common { color: #8d8d9b; } .r-rare { color: #5cb8ff; } .r-epic { color: #c08cff; } .r-legendary { color: var(--accent1); }
+  .wlogin { background: var(--card); border-radius: 14px; padding: 16px 18px; margin-bottom: 12px; display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: center; }
+  .wlogin .wtxt { grid-column: 1 / -1; }
+  .wlogin h3 { font-size: 15px; margin-bottom: 3px; } .wlogin p { color: var(--sub); font-size: 12.5px; line-height: 1.45; }
+  .wlogin .btn { padding: 10px 18px; }
+  .wlogin .err { grid-column: 1 / -1; color: var(--danger); font-size: 12.5px; }
+  .wlogin .err:empty { display: none; }
+  .wnote { grid-column: 1 / -1; color: var(--sub); font-size: 12px; }
+
   /* mods */
   .tools { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
   .tools .field { flex: 1; }
@@ -228,6 +263,7 @@
   <nav class="nav">
     <button class="on" data-page="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Играть</button>
     <button data-page="mods"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg>Моды</button>
+    <button data-page="wardrobe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 3 4 5.5 2 10l3.5 1.5V21h13v-9.5L22 10l-2-4.5L16 3c-.5 1.6-2 2.6-4 2.6S8.5 4.6 8 3z"/></svg>Гардероб</button>
     <button data-page="servers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg>Серверы</button>
     <button data-page="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M1 12h3M20 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Настройки</button>
     <button data-page="about"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>Функции</button>
@@ -247,7 +283,7 @@
     <div class="hero" id="hero">
       <div class="info">
         <h1 id="heroTitle"><span>Duck</span> Visual</h1>
-        <p id="heroSub">Minecraft 1.21.4 · Fabric · 62 визуальные функции · меню на Right Shift</p>
+        <p id="heroSub">Minecraft 1.21.4 · Fabric · 65 функций · меню на Right Shift</p>
         <div class="chips" id="chips">
           <span class="chip">TargetESP</span><span class="chip">Trajectories</span><span class="chip">China Hat</span>
           <span class="chip">Nametags</span><span class="chip">Music HUD</span><span class="chip">Custom Sky</span><span class="chip">26 палитр</span>
@@ -282,6 +318,40 @@
       <select class="field" id="modSort"><option value="relevance">По релевантности</option><option value="downloads">Популярные</option><option value="updated">Обновлённые</option></select>
     </div>
     <div class="scroll" id="modList" style="flex:1"></div>
+  </section>
+
+  <section class="page" id="page-wardrobe">
+    <div class="whead"><h2>Гардероб</h2><div class="wme" id="wMe" hidden><span>Аккаунт сайта: <b id="wLogin"></b> <small id="wNick"></small></span><button class="btn" id="wOut">Выйти</button></div></div>
+    <div class="wbody">
+      <div class="wleft">
+        <div class="stage"><canvas id="wBig" width="432" height="376"></canvas><small id="wStageHint">спереди и сзади</small></div>
+        <div class="card" id="wSkinCard" hidden>
+          <div class="row"><div>Свой скин<small>PNG 64×64</small></div><button class="btn" id="wUpload">Загрузить</button></div>
+          <div class="row"><div>Тонкие руки<small>модель Alex</small></div><button class="switch" id="wSlim"></button></div>
+          <input type="file" id="wFile" accept="image/png" hidden>
+        </div>
+        <div class="card">
+          <div class="row"><div>Ресурспак Duck PvP<small>Короткие мечи, низкий огонь, свой хотбар · 1.21.4</small></div><button class="switch" id="pvpPack"></button></div>
+        </div>
+      </div>
+      <div class="wright">
+        <div class="wtabs">
+          <div class="seg" id="wKind"><button data-v="capes" class="on">Плащи</button><button data-v="masks">Маски</button><button data-v="skins">Скины</button></div>
+          <span class="hint" id="wHint"></span>
+        </div>
+        <div class="scroll" style="flex:1">
+          <div class="wlogin" id="wLoginBox" hidden>
+            <div class="wtxt"><h3>Войди аккаунтом duckvisual.ru, чтобы надеть</h3><p>Косметику видят все игроки с Duck Visual. Аккаунт на сайте — только ник и пароль, без почты.</p></div>
+            <input class="field" id="wUser" placeholder="Ник на сайте" autocomplete="off" spellcheck="false">
+            <input class="field" id="wPass" type="password" placeholder="Пароль">
+            <button class="btn primary" id="wIn">Войти</button>
+            <div class="err" id="wErr"></div>
+            <div class="wnote">Нет аккаунта? <a href="#" id="wReg" style="color:var(--accent1)">Зарегистрироваться на сайте</a> — займёт минуту.</div>
+          </div>
+          <div class="wgrid" id="wGrid"></div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="page" id="page-servers">
@@ -447,7 +517,7 @@ function updateVersionUI() {
   const duck = st.version === st.duckVersion && st.loader === 'fabric';
   $('#vlabel').innerHTML = st.version + (duck ? ' <span class="badge">DUCK</span>' : ` <span class="badge gray">${st.loader === 'fabric' ? 'Fabric' : 'Vanilla'}</span>`);
   $('#heroTitle').innerHTML = duck ? '<span>Duck</span> Visual' : 'Minecraft <span>' + st.version + '</span>';
-  $('#heroSub').textContent = duck ? 'Minecraft 1.21.4 · Fabric · 62 визуальные функции · меню на Right Shift'
+  $('#heroSub').textContent = duck ? 'Minecraft 1.21.4 · Fabric · 65 функций · меню на Right Shift'
     : (st.loader === 'fabric' ? 'Fabric · моды оптимизации · Duck Visual доступен только на ' + st.duckVersion : 'Чистый Minecraft без модов');
   $('#chips').style.display = duck ? '' : 'none';
   $$('.loaders button').forEach(b => b.classList.toggle('on', b.dataset.loader === st.loader));
@@ -471,6 +541,7 @@ async function refresh() {
   $$('#after button').forEach(b => b.classList.toggle('on', b.dataset.v === st.afterLaunch));
   $('#jvm').value = st.jvmArgs || '';
   $('#dir').textContent = st.dir;
+  $('#pvpPack').classList.toggle('on', !!st.pvpPack);
   renderPC();
   $('#cfKey').placeholder = st.cfKey ? 'Ключ сохранён (вставь новый, чтобы заменить; пусто — удалить)' : 'Вставь API-ключ CurseForge';
   const mc = $('#modsCard');
@@ -819,6 +890,165 @@ $$('.nav button').forEach(b => b.addEventListener('click', () => {
 }));
 $('#cfKey').onchange = async () => { await dlSaveSettings({ ...settingsData(), cfKey: $('#cfKey').value }); $('#cfKey').value = ''; await refresh(); toast(st.cfKey ? 'Ключ CurseForge сохранён' : 'Ключ CurseForge удалён'); };
 $('#cfGet').onclick = () => dlOpenURL('https://console.curseforge.com/');
+
+// ---------- wardrobe ----------
+// Duck Visual: плоский предпросмотр скина, плаща и маски (спереди и сзади) на <canvas>.
+// DuckPreview.draw(canvas, { skin, cape, mask, slim, view: 'front' | 'back' | 'both' | 'head' })
+const DuckPreview = (() => {
+  const cache = {};
+  const load = src => {
+    if (!src) return Promise.resolve(null);
+    if (!cache[src]) cache[src] = new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
+    return cache[src];
+  };
+  // [sx, sy, w, h, dx, dy] for 64x64 skins; arms get width 3 on slim skins
+  function parts(view, slim, legacy) {
+    const a = slim ? 3 : 4;
+    if (view === 'front') {
+      const p = [[8, 8, 8, 8, 4, 0], [20, 20, 8, 12, 4, 8], [44, 20, a, 12, 4 - a, 8], [4, 20, 4, 12, 4, 20]];
+      p.push(legacy ? [44, 20, a, 12, 12, 8, 1] : [36, 52, a, 12, 12, 8], legacy ? [4, 20, 4, 12, 8, 20, 1] : [20, 52, 4, 12, 8, 20]);
+      p.push([40, 8, 8, 8, 4, 0]);
+      if (!legacy) p.push([20, 36, 8, 12, 4, 8], [44, 36, a, 12, 4 - a, 8], [52, 52, a, 12, 12, 8], [4, 36, 4, 12, 4, 20], [4, 52, 4, 12, 8, 20]);
+      return p;
+    }
+    const bx = slim ? 51 : 52, lx = slim ? 43 : 44;
+    const p = [[24, 8, 8, 8, 4, 0], [32, 20, 8, 12, 4, 8], [bx, 20, a, 12, 12, 8], [12, 20, 4, 12, 8, 20]];
+    p.push(legacy ? [bx, 20, a, 12, 4 - a, 8, 1] : [lx, 52, a, 12, 4 - a, 8], legacy ? [12, 20, 4, 12, 4, 20, 1] : [28, 52, 4, 12, 4, 20]);
+    p.push([56, 8, 8, 8, 4, 0]);
+    if (!legacy) p.push([32, 36, 8, 12, 4, 8], [bx, 36, a, 12, 12, 8], [lx + 16, 52, a, 12, 4 - a, 8], [12, 36, 4, 12, 8, 20], [12, 52, 4, 12, 4, 20]);
+    return p;
+  }
+  function body(g, skin, view, slim, ox, s) {
+    if (!skin) return;
+    const legacy = skin.height === 32;
+    for (const [sx, sy, w, h, dx, dy, flip] of parts(view, slim, legacy)) {
+      if (flip) {
+        g.save(); g.translate((ox + dx + w) * s, dy * s); g.scale(-1, 1);
+        g.drawImage(skin, sx, sy, w, h, 0, 0, w * s, h * s); g.restore();
+      } else g.drawImage(skin, sx, sy, w, h, (ox + dx) * s, dy * s, w * s, h * s);
+    }
+  }
+  function mask(g, m, view, ox, s, oy = 0) {
+    if (!m) return;
+    const sx = view === 'front' ? 8 : 24, k = 9.2, off = (k - 8) / 2;
+    g.drawImage(m, sx, 8, 8, 8, (ox + 4 - off) * s, (oy - off) * s, k * s, k * s);
+  }
+  async function draw(cv, o) {
+    const [skin, cape, m] = await Promise.all([load(o.skin), load(o.cape), load(o.mask)]);
+    const g = cv.getContext('2d');
+    g.imageSmoothingEnabled = false;
+    g.clearRect(0, 0, cv.width, cv.height);
+    const view = o.view || 'both';
+    if (view === 'head') {
+      const s = Math.floor(Math.min(cv.width, cv.height) / 10);
+      const ox = (cv.width / s - 8) / 2 - 4, oy = (cv.height / s - 8) / 2;
+      if (skin) { g.drawImage(skin, 8, 8, 8, 8, (ox + 4) * s, oy * s, 8 * s, 8 * s); g.drawImage(skin, 40, 8, 8, 8, (ox + 4) * s, oy * s, 8 * s, 8 * s); }
+      mask(g, m, 'front', ox, s, oy);
+      return;
+    }
+    const views = view === 'both' ? ['front', 'back'] : [view];
+    const W = views.length * 16 + (views.length - 1) * 6;
+    const s = Math.max(1, Math.floor(Math.min(cv.width / W, cv.height / 33)));
+    let ox = (cv.width / s - W) / 2;
+    g.save(); g.translate(0, (cv.height / s - 32) / 2 * s);
+    for (const v of views) {
+      body(g, skin, v, o.slim, ox, s);
+      if (cape && v === 'back') g.drawImage(cape, 1, 1, 10, 16, (ox + 3) * s, 8 * s, 10 * s, 16 * s);
+      mask(g, m, v, ox, s);
+      ox += 22;
+    }
+    g.restore();
+  }
+  return { draw, load };
+})();
+
+let site = null, wKind = 'capes';
+const wField = { capes: 'cape', masks: 'mask', skins: 'skin' };
+const wRus = { common: 'обычный', rare: 'редкий', epic: 'эпический', legendary: 'легендарный' };
+const wUrl = (kind, id) => !id ? null : id.startsWith('u:') ? site.site + '/cosmetics/u/' + id.slice(2) + '.png' : site.site + '/cosmetics/' + kind + '/' + id + '.png';
+let wPreviewOnly = { cape: null, mask: null, skin: null };
+function wPick(f) { return site.wardrobe ? site.wardrobe[f] : wPreviewOnly[f]; }
+function wSkin() { return wUrl('skins', wPick('skin')) || site.site + '/cosmetics/skins/warrior.png'; }
+function wSlim() { return !!(site.wardrobe && site.wardrobe.slim && (site.wardrobe.skin || '').startsWith('u:')); }
+function wBig() {
+  if (!site) return;
+  DuckPreview.draw($('#wBig'), { skin: wSkin(), cape: wUrl('capes', wPick('cape')), mask: wUrl('masks', wPick('mask')), slim: wSlim(), view: 'both' });
+}
+function wRender() {
+  const g = $('#wGrid'), w = site.wardrobe, cat = site.catalog || { capes: [], masks: [], skins: [] };
+  $('#wMe').hidden = !w; $('#wSkinCard').hidden = !w || wKind !== 'skins';
+  if (w) { $('#wLogin').textContent = w.login; $('#wNick').textContent = w.mcNick ? '· в игре ' + w.mcNick : ''; $('#wSlim').classList.toggle('on', !!w.slim); }
+  $('#wLoginBox').hidden = !!w;
+  $('#wHint').textContent = w ? 'Нажми на вещь, чтобы надеть' : 'Предпросмотр — войди, чтобы надеть';
+  $('#wStageHint').textContent = site.notice || site.error || 'спереди и сзади';
+  g.innerHTML = '';
+  const f = wField[wKind], cur = wPick(f) || '';
+  const items = [{ id: '', name: { capes: 'Без плаща', masks: 'Без маски', skins: 'Обычный скин' }[wKind], rarity: '' }];
+  if (wKind === 'skins' && cur.startsWith('u:')) items.push({ id: cur, name: 'Мой скин', rarity: 'свой' });
+  items.push(...(cat[wKind] || []));
+  for (const it of items) {
+    const b = document.createElement('button'); b.className = 'witem' + (it.id === cur ? ' on' : '');
+    b.innerHTML = (it.id ? '<canvas width="176" height="176"></canvas>' : '<div class="none">∅</div>') + `<b>${esc(it.name)}</b><small class="r-${esc(it.rarity)}">${esc(wRus[it.rarity] || it.rarity || '—')}</small>`;
+    if (it.id) {
+      const cv = b.querySelector('canvas');
+      if (wKind === 'capes') DuckPreview.draw(cv, { skin: wSkin(), cape: wUrl('capes', it.id), slim: wSlim(), view: 'back' });
+      else if (wKind === 'masks') DuckPreview.draw(cv, { skin: wSkin(), mask: wUrl('masks', it.id), view: 'head' });
+      else DuckPreview.draw(cv, { skin: wUrl('skins', it.id), view: 'front', slim: it.id.startsWith('u:') && wSlim() });
+    }
+    b.onclick = () => wWear(f, it.id);
+    g.appendChild(b);
+  }
+  wBig();
+}
+async function wWear(f, id) {
+  if (!site.wardrobe) { wPreviewOnly[f] = id || null; wRender(); return; }
+  const prev = site.wardrobe[f];
+  site.wardrobe[f] = id || null; wRender();
+  try { site.wardrobe = await dlWardrobeSave({ [f]: id }); wRender(); toast('Сохранено — в игре обновится за полминуты'); }
+  catch (e) { site.wardrobe[f] = prev; wRender(); wFail(e); }
+}
+function wFail(e) {
+  const m = String(e && e.message || e);
+  toast(m);
+  if (m.includes('заново')) loadWardrobe();
+}
+async function loadWardrobe() {
+  $('#wGrid').innerHTML = '<div style="color:var(--sub);padding:20px">Загружаю гардероб…</div>';
+  site = await dlSite();
+  wRender();
+}
+$$('#wKind button').forEach(b => b.onclick = () => { $$('#wKind button').forEach(x => x.classList.toggle('on', x === b)); wKind = b.dataset.v; wRender(); });
+$('#wIn').onclick = async () => {
+  $('#wErr').textContent = ''; $('#wIn').disabled = true; $('#wIn').textContent = 'Вхожу…';
+  const r = await dlSiteLogin($('#wUser').value, $('#wPass').value);
+  $('#wIn').disabled = false; $('#wIn').textContent = 'Войти';
+  if (!r.wardrobe) { $('#wErr').textContent = r.error || 'Не получилось войти'; return; }
+  $('#wPass').value = ''; site = r; wPreviewOnly = { cape: null, mask: null, skin: null }; wRender(); toast('Вход выполнен: ' + r.wardrobe.login);
+};
+$('#wPass').onkeydown = e => { if (e.key === 'Enter') $('#wIn').click(); };
+$('#wReg').onclick = e => { e.preventDefault(); dlOpenURL((site ? site.site : 'https://duckvisual.ru') + '/register.php'); };
+$('#wOut').onclick = async () => { await dlSiteLogout(); site.wardrobe = null; wRender(); };
+$('#wUpload').onclick = () => $('#wFile').click();
+$('#wFile').onchange = () => {
+  const file = $('#wFile').files[0]; $('#wFile').value = '';
+  if (!file) return;
+  const rd = new FileReader();
+  rd.onload = async () => {
+    try { site.wardrobe = await dlWardrobeUpload(String(rd.result).split(',')[1], $('#wSlim').classList.contains('on')); wRender(); toast('Скин загружен и надет'); }
+    catch (e) { wFail(e); }
+  };
+  rd.readAsDataURL(file);
+};
+$('#wSlim').onclick = async () => {
+  const on = !$('#wSlim').classList.contains('on'); $('#wSlim').classList.toggle('on', on);
+  try { site.wardrobe = await dlWardrobeSave({ slim: on ? '1' : '0' }); wRender(); } catch (e) { wFail(e); }
+};
+$('#pvpPack').onclick = async () => {
+  const on = !$('#pvpPack').classList.contains('on'); $('#pvpPack').classList.toggle('on', on);
+  await dlSetPvPPack(on);
+  toast(on ? 'Ресурспак Duck PvP включится при следующем запуске 1.21.4' : 'Ресурспак Duck PvP выключен');
+};
+$$('.nav button').forEach(b => b.addEventListener('click', () => { if (b.dataset.page === 'wardrobe' && !site) loadWardrobe(); }));
 
 $('#hero').style.backgroundImage = 'url(data:image/jpeg;base64,{{HERO}})';
 refresh();

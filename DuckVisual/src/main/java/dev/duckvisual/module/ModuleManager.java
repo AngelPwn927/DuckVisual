@@ -1,5 +1,6 @@
 package dev.duckvisual.module;
 
+import dev.duckvisual.module.impl.cosmetics.*;
 import dev.duckvisual.module.impl.hud.*;
 import dev.duckvisual.module.impl.misc.*;
 import dev.duckvisual.module.impl.visual.*;
@@ -47,6 +48,10 @@ public class ModuleManager {
         add(new HandTint());
         add(new Hitmarker());
         add(new TargetCircle());
+        // Cosmetics
+        add(new Capes());
+        add(new Masks());
+        add(new Skins());
         // Hud
         add(new Watermark());
         add(new ArrayListHud());

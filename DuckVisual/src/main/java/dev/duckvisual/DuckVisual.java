@@ -63,6 +63,12 @@ public class DuckVisual implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
 
+        net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback.EVENT.register((type, renderer, helper, ctx) -> {
+            if (renderer instanceof net.minecraft.client.render.entity.PlayerEntityRenderer player) {
+                helper.register(new dev.duckvisual.cosmetics.MaskFeatureRenderer(player));
+            }
+        });
+
         HudRenderCallback.EVENT.register((ctx, counter) -> {
             MinecraftClient mc = MinecraftClient.getInstance();
             if (mc.options.hudHidden || mc.player == null) return;

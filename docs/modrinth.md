@@ -35,7 +35,7 @@
 ```markdown
 # 🦆 Duck Visual
 
-Stylish **client-side** visuals for Minecraft **1.21.4** (Fabric). 62 modules, all configurable and bindable. Press **Right Shift** to open the menu.
+Stylish **client-side** visuals for Minecraft **1.21.4** (Fabric). 65 modules, all configurable and bindable. Capes, masks and skins from the duckvisual.ru wardrobe. Press **Right Shift** to open the menu.
 
 ![Menu](https://raw.githubusercontent.com/AngelPwn927/DuckVisual/main/docs/images/menu.jpg)
 
@@ -64,7 +64,7 @@ News and support: [t.me/duckvisual](https://t.me/duckvisual)
 ```markdown
 # 🦆 Duck Visual
 
-Красивые **клиентские** визуалы для Minecraft **1.21.4** (Fabric). 62 функции, всё настраивается и биндится. Меню — на **Right Shift**.
+Красивые **клиентские** визуалы для Minecraft **1.21.4** (Fabric). 65 функций, всё настраивается и биндится. Плащи, маски и скины из гардероба duckvisual.ru. Меню — на **Right Shift**.
 
 ## Что внутри
 - **Бой:** TargetESP, TargetHud, траектории снарядов, индикатор крита, урон над мобами, хитмаркер, частицы и эффекты убийства

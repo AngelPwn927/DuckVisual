@@ -13,6 +13,9 @@ import (
 //go:embed embed/duck-visual.jar
 var duckVisualJar []byte
 
+//go:embed embed/Duck-PvP.zip
+var pvpPack []byte
+
 //go:embed ui/index.html
 var indexHTML string
 
@@ -21,6 +24,7 @@ var heroJPG []byte
 
 func main() {
 	core.DuckVisualJar = duckVisualJar
+	core.PvPPack = pvpPack
 	cli := flag.Bool("cli", false, "install and launch from the console")
 	name := flag.String("name", "", "offline nickname (with -cli)")
 	version := flag.String("version", "", "Minecraft version, e.g. 1.21.4 or 1.8.9 (with -cli)")
@@ -28,6 +32,7 @@ func main() {
 	weak := flag.Bool("weak", false, "weak PC graphics preset for a new instance (with -cli)")
 	join := flag.String("join", "", "server address to join right away (with -cli)")
 	world := flag.String("world", "", "singleplayer world folder to open right away, 1.20+ (with -cli)")
+	pvp := flag.String("pvp-pack", "", "on/off: the Duck PvP resource pack on 1.21.4 (with -cli)")
 	uninstall := flag.Bool("uninstall", false, "remove the installed launcher (Windows Settings → Apps uses this)")
 	flag.Parse()
 	if *uninstall {
@@ -35,12 +40,12 @@ func main() {
 		return
 	}
 	if *cli {
-		os.Exit(runCLI(*name, *version, *loader, *weak, *join, *world))
+		os.Exit(runCLI(*name, *version, *loader, *weak, *join, *world, *pvp))
 	}
 	runUI()
 }
 
-func runCLI(name, version, loader string, weak bool, join, world string) int {
+func runCLI(name, version, loader string, weak bool, join, world, pvp string) int {
 	cfg := core.LoadConfig()
 	if name != "" {
 		acc, err := core.OfflineAccount(name)
@@ -58,6 +63,9 @@ func runCLI(name, version, loader string, weak bool, join, world string) int {
 	}
 	if weak {
 		cfg.Preset = "fps"
+	}
+	if pvp == "on" || pvp == "off" {
+		cfg.PvPPack = pvp == "on"
 	}
 	cfg.Save()
 	cfg.QuickJoin, cfg.QuickWorld = join, world

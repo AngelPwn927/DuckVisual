@@ -4,6 +4,7 @@ public enum Category {
     VISUALS("Visuals", "V"),
     HUD("Hud", "H"),
     WORLD("World", "W"),
+    COSMETICS("Cosmetics", "C"),
     MISC("Misc", "M");
 
     public final String title;

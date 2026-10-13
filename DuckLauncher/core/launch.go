@@ -84,6 +84,7 @@ func Prepare(cfg *Config, totalMemMB int, progress Progress) (*exec.Cmd, string,
 	if cfg.Lang != "" {
 		setOptions(opts, map[string]string{"lang": cfg.Lang})
 	}
+	ApplyPvPPack(gameDir, cfg.Version, cfg.PvPPack)
 	EnsureServers(gameDir) // a broken servers.dat must not stop the game
 
 	memory := cfg.MemoryMB

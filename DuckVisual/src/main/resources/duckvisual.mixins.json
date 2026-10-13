@@ -5,6 +5,7 @@
   "plugin": "dev.duckvisual.mixin.DuckMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "AbstractClientPlayerEntityMixin",
     "GameRendererMixin",
     "HeldItemRendererMixin",
     "InGameHudMixin",

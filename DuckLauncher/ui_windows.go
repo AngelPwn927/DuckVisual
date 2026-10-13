@@ -106,6 +106,12 @@ func runUI() {
 	w.Bind("dlModRemove", a.modRemove)
 	w.Bind("dlFix", a.fix)
 	w.Bind("dlOpenLog", a.openLog)
+	w.Bind("dlSite", a.site)
+	w.Bind("dlSiteLogin", a.siteLogin)
+	w.Bind("dlSiteLogout", a.siteLogout)
+	w.Bind("dlWardrobeSave", a.wardrobeSave)
+	w.Bind("dlWardrobeUpload", a.wardrobeUpload)
+	w.Bind("dlSetPvPPack", a.setPvPPack)
 	w.SetHtml(strings.Replace(indexHTML, "{{HERO}}", base64.StdEncoding.EncodeToString(heroJPG), 1))
 	w.Run()
 }
@@ -142,6 +148,8 @@ type state struct {
 	AppVersion  string             `json:"appVersion"`
 	Dir         string             `json:"dir"`
 	PC          pcInfo             `json:"pc"`
+	PvPPack     bool               `json:"pvpPack"`
+	SiteLogin   string             `json:"siteLogin"`
 }
 
 func (a *app) state() state {
@@ -157,7 +165,7 @@ func (a *app) state() state {
 		MemoryMB: c.MemoryMB, AutoMemory: core.AutoMemoryMB(total), MaxMemoryMB: total, Mods: c.Mods, PerfMods: core.PerfMods,
 		Preset: c.Preset, AutoPreset: core.ResolvePreset("auto", total), HighPrio: c.HighPrio, DGPU: c.DGPU, Width: c.Width, Height: c.Height, Fullscreen: c.Fullscreen, Lang: c.Lang,
 		AfterLaunch: c.AfterLaunch, JVMArgs: c.JVMArgs, CFKey: c.CFKey != "", Running: a.running, Busy: a.busy,
-		AppVersion: core.LauncherVersion, Dir: core.BaseDir(), PC: readPC()}
+		AppVersion: core.LauncherVersion, Dir: core.BaseDir(), PC: readPC(), PvPPack: c.PvPPack, SiteLogin: c.SiteLogin}
 }
 
 func (a *app) versions() ([]core.GameVersion, error) {
@@ -424,6 +432,7 @@ func (a *app) launch(join string) string {
 	}
 	a.busy = true
 	a.mu.Unlock()
+	a.bindNickOnLaunch()
 
 	go func() {
 		a.mu.Lock()

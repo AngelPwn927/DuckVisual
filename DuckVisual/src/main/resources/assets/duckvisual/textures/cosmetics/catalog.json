@@ -1,0 +1,181 @@
+{
+ "capes": [
+  {
+   "id": "duck",
+   "name": "Duck",
+   "rarity": "legendary"
+  },
+  {
+   "id": "sunset",
+   "name": "Sunset",
+   "rarity": "rare"
+  },
+  {
+   "id": "neon",
+   "name": "Neon Grid",
+   "rarity": "epic"
+  },
+  {
+   "id": "flame",
+   "name": "Inferno",
+   "rarity": "epic"
+  },
+  {
+   "id": "frost",
+   "name": "Frost",
+   "rarity": "rare"
+  },
+  {
+   "id": "void",
+   "name": "Void",
+   "rarity": "epic"
+  },
+  {
+   "id": "toxic",
+   "name": "Toxic",
+   "rarity": "rare"
+  },
+  {
+   "id": "blood",
+   "name": "Bloodlust",
+   "rarity": "epic"
+  },
+  {
+   "id": "duelist",
+   "name": "Duelist",
+   "rarity": "rare"
+  },
+  {
+   "id": "thunder",
+   "name": "Thunder",
+   "rarity": "rare"
+  },
+  {
+   "id": "champion",
+   "name": "Champion",
+   "rarity": "legendary"
+  },
+  {
+   "id": "reaper",
+   "name": "Reaper",
+   "rarity": "epic"
+  },
+  {
+   "id": "ender",
+   "name": "Ender",
+   "rarity": "rare"
+  },
+  {
+   "id": "rainbow",
+   "name": "Spectrum",
+   "rarity": "rare"
+  },
+  {
+   "id": "hazard",
+   "name": "Hazard",
+   "rarity": "common"
+  },
+  {
+   "id": "camo",
+   "name": "Camo",
+   "rarity": "common"
+  }
+ ],
+ "masks": [
+  {
+   "id": "duck",
+   "name": "Duck Beak",
+   "rarity": "legendary"
+  },
+  {
+   "id": "ninja",
+   "name": "Ninja",
+   "rarity": "rare"
+  },
+  {
+   "id": "hockey",
+   "name": "Hockey",
+   "rarity": "epic"
+  },
+  {
+   "id": "visor",
+   "name": "Cyber Visor",
+   "rarity": "epic"
+  },
+  {
+   "id": "skull",
+   "name": "Skull",
+   "rarity": "epic"
+  },
+  {
+   "id": "oni",
+   "name": "Oni",
+   "rarity": "legendary"
+  },
+  {
+   "id": "gas",
+   "name": "Gas Mask",
+   "rarity": "rare"
+  },
+  {
+   "id": "fox",
+   "name": "Fox",
+   "rarity": "rare"
+  },
+  {
+   "id": "shades",
+   "name": "Shades",
+   "rarity": "common"
+  }
+ ],
+ "skins": [
+  {
+   "id": "duckling",
+   "name": "Duckling",
+   "rarity": "legendary",
+   "model": "classic"
+  },
+  {
+   "id": "warrior",
+   "name": "Duck Warrior",
+   "rarity": "epic",
+   "model": "classic"
+  },
+  {
+   "id": "ninja",
+   "name": "Shadow Ninja",
+   "rarity": "epic",
+   "model": "classic"
+  },
+  {
+   "id": "neon",
+   "name": "Neon Runner",
+   "rarity": "rare",
+   "model": "classic"
+  },
+  {
+   "id": "knight",
+   "name": "Crimson Knight",
+   "rarity": "legendary",
+   "model": "classic"
+  },
+  {
+   "id": "frost",
+   "name": "Ice Assassin",
+   "rarity": "rare",
+   "model": "classic"
+  },
+  {
+   "id": "inferno",
+   "name": "Inferno",
+   "rarity": "epic",
+   "model": "classic"
+  },
+  {
+   "id": "gold",
+   "name": "Golden Champion",
+   "rarity": "legendary",
+   "model": "classic"
+  }
+ ]
+}
