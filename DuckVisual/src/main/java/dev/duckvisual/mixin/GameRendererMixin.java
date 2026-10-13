@@ -23,6 +23,7 @@ public class GameRendererMixin {
     @Inject(method = "render", at = @At("HEAD"))
     private void duck$frame(RenderTickCounter counter, boolean tick, CallbackInfo ci) {
         Animation.updateFrame();
+        dev.duckvisual.util.Glass.newFrame();
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE",

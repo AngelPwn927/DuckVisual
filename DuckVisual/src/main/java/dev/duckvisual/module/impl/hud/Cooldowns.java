@@ -36,11 +36,10 @@ public class Cooldowns extends HudModule {
         }
         float x0 = getX(), y0 = getY();
         width = 110;
-        height = 18 + items.size() * 14 + (items.isEmpty() ? 0 : 3);
+        height = 20 + items.size() * 14 + (items.isEmpty() ? 0 : 3);
         panel(ctx, x0, y0, width, height);
-        header(ctx, x0, y0, width);
-        Render2D.text(ctx, "Cooldowns", x0 + 6, y0 + 6, 0xFFFFFFFF);
-        float yy = y0 + 18;
+        title(ctx, "Cooldowns", "gear", x0, y0, width);
+        float yy = y0 + 20;
         int i = 0;
         for (ItemStack s : items) {
             float p = cd.getCooldownProgress(s, td);
@@ -50,7 +49,7 @@ public class Cooldowns extends HudModule {
             ctx.drawItem(s, 0, 0);
             ctx.getMatrices().pop();
             float bx = x0 + 22, bw = width - 28;
-            Render2D.roundedRect(ctx, bx, yy + 4, bw, 4, 2, 0xFF2A2A33);
+            Render2D.roundedRect(ctx, bx, yy + 4, bw, 4, 2, 0x24FFFFFF);
             Render2D.roundedRect(ctx, bx, yy + 4, Math.max(4, bw * p), 4, 2, ColorUtil.theme(i++ * 4));
             yy += 14;
         }

@@ -27,19 +27,20 @@ public class Keybinds extends HudModule {
                 .filter(m -> m.getKey() > 0 && !(m instanceof ClickGui)).toList();
         float x = getX(), y = getY();
         width = 100;
-        for (Module m : list) width = Math.max(width, Render2D.width(m.getName()) + Render2D.width(Keys.name(m.getKey())) + 30);
-        height = 18 + list.size() * 11 + (list.isEmpty() ? 0 : 3);
+        for (Module m : list) width = Math.max(width, Render2D.width(m.getName()) + Render2D.width(Keys.name(m.getKey())) + 40);
+        height = 20 + list.size() * 13 + (list.isEmpty() ? 0 : 2);
         panel(ctx, x, y, width, height);
-        header(ctx, x, y, width);
-        Render2D.text(ctx, "Keybinds", x + 6, y + 6, 0xFFFFFFFF);
-        Render2D.text(ctx, "⌨", x + width - 14, y + 6, ColorUtil.theme());
-        float yy = y + 19;
+        title(ctx, "Keybinds", "hud", x, y, width);
+        float yy = y + 21;
         for (Module m : list) {
-            int c = m.isEnabled() ? 0xFFFFFFFF : 0xFF8A8A95;
-            Render2D.text(ctx, m.getName(), x + 6, yy, c);
-            String k = "[" + Keys.name(m.getKey()) + "]";
-            Render2D.text(ctx, k, x + width - 6 - Render2D.width(k), yy, m.isEnabled() ? ColorUtil.theme() : 0xFF8A8A95);
-            yy += 11;
+            int c = m.isEnabled() ? 0xFFF2F2F7 : 0xFF8A8A95;
+            if (m.animation > 0.01f) Render2D.circle(ctx, x + 9, yy + 4, 2, ColorUtil.withAlpha(ColorUtil.theme(), (int) (255 * m.animation)));
+            Render2D.text(ctx, m.getName(), x + 15, yy, c);
+            String k = Keys.name(m.getKey());
+            float kw = Render2D.width(k) + 8;
+            Render2D.roundedRect(ctx, x + width - 6 - kw, yy - 2, kw, 11, 5.5f, m.isEnabled() ? ColorUtil.withAlpha(ColorUtil.theme(), 70) : 0x16FFFFFF);
+            Render2D.text(ctx, k, x + width - 2 - kw, yy, c);
+            yy += 13;
         }
     }
 }

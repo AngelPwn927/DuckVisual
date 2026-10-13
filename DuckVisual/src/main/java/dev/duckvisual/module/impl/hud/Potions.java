@@ -33,11 +33,10 @@ public class Potions extends HudModule {
             rows.add(new String[]{name, dur});
             width = Math.max(width, Render2D.width(name) + Render2D.width(dur) + 22);
         }
-        height = 18 + rows.size() * 11 + (rows.isEmpty() ? 0 : 3);
+        height = 20 + rows.size() * 11 + (rows.isEmpty() ? 0 : 3);
         panel(ctx, x, y, width, height);
-        header(ctx, x, y, width);
-        Render2D.text(ctx, "Potions", x + 6, y + 6, 0xFFFFFFFF);
-        float yy = y + 19;
+        title(ctx, "Potions", "visuals", x, y, width);
+        float yy = y + 21;
         for (int i = 0; i < rows.size(); i++) {
             StatusEffectInstance e = effects.get(i);
             int color = 0xFF000000 | e.getEffectType().value().getColor();

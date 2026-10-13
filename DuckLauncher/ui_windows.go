@@ -85,7 +85,7 @@ func runUI() {
 	}
 	a.w = w
 	defer w.Destroy()
-	w.SetSize(1000, 640, webview2.HintFixed)
+	fitWindow(w, 1000, 640)
 
 	w.Bind("dlState", a.state)
 	w.Bind("dlLoginOffline", a.loginOffline)

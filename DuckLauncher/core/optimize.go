@@ -173,10 +173,30 @@ func duckVisualLight(gameDir, preset string) bool {
 		settings = map[string]any{}
 		gui["settings"] = settings
 	}
-	settings["Blur"] = preset != "potato"
-	if menu, _ := cfg["MainMenu"].(map[string]any); menu != nil {
-		if ms, _ := menu["settings"].(map[string]any); ms != nil {
-			ms["Particles"] = preset != "potato"
+	delete(settings, "Blur") // renamed to "Blur Background" in Duck Visual with the macOS menu
+	if preset == "potato" {
+		// the heaviest effects for a PC without a real GPU: full-screen blur, glass HUD, menu rain, crystals
+		settings["Blur Background"] = false
+		settings["Glass HUD"] = false
+		if menu, _ := cfg["MainMenu"].(map[string]any); menu != nil {
+			if ms, _ := menu["settings"].(map[string]any); ms != nil {
+				ms["Particles"] = false
+				ms["Weather"] = "None"
+			}
+		}
+		if wp, _ := cfg["WorldParticles"].(map[string]any); wp != nil {
+			wp["enabled"] = false
+		}
+	} else {
+		// leaving potato brings the look back (this runs once per profile change)
+		settings["Glass HUD"] = true
+		if menu, _ := cfg["MainMenu"].(map[string]any); menu != nil {
+			if ms, _ := menu["settings"].(map[string]any); ms != nil {
+				ms["Particles"] = true
+				if ms["Weather"] == "None" {
+					ms["Weather"] = "Rain"
+				}
+			}
 		}
 	}
 	b, err := json.MarshalIndent(cfg, "", "  ")

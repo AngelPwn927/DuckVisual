@@ -2,6 +2,7 @@ package dev.duckvisual.module;
 
 import dev.duckvisual.setting.NumberSetting;
 import dev.duckvisual.util.ColorUtil;
+import dev.duckvisual.util.Glass;
 import dev.duckvisual.util.Render2D;
 import net.minecraft.client.gui.DrawContext;
 
@@ -33,13 +34,22 @@ public abstract class HudModule extends Module {
         y.set((double) Math.max(0, Math.min(sh - height, getY())));
     }
 
-    /** The standard Duck Visual panel: blurred-looking dark body, glow and accent stripe. */
+    /** The standard Duck Visual panel: frosted glass (macOS style) with a soft shadow and a hairline border. */
     public static void panel(DrawContext ctx, float x, float y, float w, float h) {
-        Render2D.shadow(ctx, x, y, w, h, 4, 5, ColorUtil.withAlpha(ColorUtil.theme(), 90));
-        Render2D.roundedRect(ctx, x, y, w, h, 4, 0xE0111116);
+        float r = Math.min(7, h / 2);
+        Render2D.shadow(ctx, x, y + 1, w, h, r, 6, 0x50000000);
+        Glass.panel(ctx, x, y, w, h, r, 0xB0141418, 1);
+        Render2D.roundedOutline(ctx, x, y, w, h, r, 1, 0x1EFFFFFF);
     }
 
+    /** Title row of a panel: the title, an icon on the right and a hairline under them. */
     public static void header(DrawContext ctx, float x, float y, float w) {
-        Render2D.roundedGradient(ctx, x, y, w, 2, 1, ColorUtil.theme(0), ColorUtil.theme(10), ColorUtil.theme(10), ColorUtil.theme(0));
+        Render2D.rect(ctx, x + 6, y + 17, w - 12, 1, 0x16FFFFFF);
+    }
+
+    public static void title(DrawContext ctx, String title, String icon, float x, float y, float w) {
+        Render2D.text(ctx, title, x + 7, y + 6, 0xFFF2F2F7);
+        if (icon != null) dev.duckvisual.gui.Icons.draw(ctx, icon, x + w - 15, y + 5, 8, ColorUtil.theme());
+        header(ctx, x, y, w);
     }
 }

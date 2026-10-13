@@ -283,7 +283,7 @@
     <div class="hero" id="hero">
       <div class="info">
         <h1 id="heroTitle"><span>Duck</span> Visual</h1>
-        <p id="heroSub">Minecraft 1.21.4 · Fabric · 65 функций · меню на Right Shift</p>
+        <p id="heroSub">Minecraft 1.21.4 · Fabric · 68 функций · меню на Right Shift</p>
         <div class="chips" id="chips">
           <span class="chip">TargetESP</span><span class="chip">Trajectories</span><span class="chip">China Hat</span>
           <span class="chip">Nametags</span><span class="chip">Music HUD</span><span class="chip">Custom Sky</span><span class="chip">26 палитр</span>
@@ -517,7 +517,7 @@ function updateVersionUI() {
   const duck = st.version === st.duckVersion && st.loader === 'fabric';
   $('#vlabel').innerHTML = st.version + (duck ? ' <span class="badge">DUCK</span>' : ` <span class="badge gray">${st.loader === 'fabric' ? 'Fabric' : 'Vanilla'}</span>`);
   $('#heroTitle').innerHTML = duck ? '<span>Duck</span> Visual' : 'Minecraft <span>' + st.version + '</span>';
-  $('#heroSub').textContent = duck ? 'Minecraft 1.21.4 · Fabric · 65 функций · меню на Right Shift'
+  $('#heroSub').textContent = duck ? 'Minecraft 1.21.4 · Fabric · 68 функций · меню на Right Shift'
     : (st.loader === 'fabric' ? 'Fabric · моды оптимизации · Duck Visual доступен только на ' + st.duckVersion : 'Чистый Minecraft без модов');
   $('#chips').style.display = duck ? '' : 'none';
   $$('.loaders button').forEach(b => b.classList.toggle('on', b.dataset.loader === st.loader));

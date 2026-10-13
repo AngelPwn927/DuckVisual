@@ -52,7 +52,8 @@ public class DuckVisual implements ClientModInitializer {
             // sensible first-launch defaults
             for (String name : new String[]{"Watermark", "ArrayList", "TargetHud", "Notifications", "Theme",
                     "JumpCircles", "TargetESP", "HitParticles", "Keybinds", "Potions",
-                    "CustomFont", "MainMenu", "MinecraftUI", "TabList", "ChatTweaks", "Nametags", "CritIndicator"}) {
+                    "CustomFont", "MainMenu", "MinecraftUI", "TabList", "ChatTweaks", "Nametags", "CritIndicator",
+                    "Information", "Keystrokes", "ItemCounter", "CustomSky", "WorldParticles"}) {
                 Module m = moduleManager.get(name);
                 if (m != null) m.setEnabledSilent(true);
             }
@@ -73,6 +74,8 @@ public class DuckVisual implements ClientModInitializer {
             MinecraftClient mc = MinecraftClient.getInstance();
             if (mc.options.hudHidden || mc.player == null) return;
             float td = counter.getTickDelta(true);
+            // blur the frame once for all glass HUD panels (cheap: a quarter-size image)
+            if (moduleManager.get(ClickGui.class).hudGlass.get() && !(mc.currentScreen instanceof dev.duckvisual.gui.ClickGuiScreen)) dev.duckvisual.util.Glass.capture(ctx);
             for (Module m : moduleManager.getModules()) {
                 m.animation = Animation.approach(m.animation, m.isEnabled() ? 1 : 0, 10);
                 if (m.isEnabled()) m.onRender2D(ctx, td);

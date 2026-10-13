@@ -44,11 +44,13 @@
 </tr>
 </table>
 
-**65 функций**, все можно настроить и забиндить:
+**68 функций**, все можно настроить и забиндить:
 
 | Бой | Игроки и мир | HUD | Стиль |
 |---|---|---|---|
-| TargetESP · Trajectories · CritIndicator · DamageIndicators · Hitmarker · HitParticles · KillEffects · TargetCircle | Nametags · HealthTags · GlowESP · BoxESP · Tracers · ChinaHat · JumpCircles · CustomSky · WorldParticles | Watermark · ArrayList · TargetHud · **Music** · Cooldowns · Potions · Keybinds · ArmorHud · TabList | 26 палитр · шрифт Montserrat · меню Minecraft в стиле Duck · Freelook · Zoom · MotionBlur · **Saturation** |
+| TargetESP · Trajectories · CritIndicator · DamageIndicators · Hitmarker · HitParticles · KillEffects · TargetCircle | Nametags · HealthTags · GlowESP · BoxESP · Tracers · ChinaHat · JumpCircles · CustomSky · WorldParticles | Watermark · ArrayList · TargetHud · **Music** · **Keystrokes** · **ItemCounter** · **Inventory** · Cooldowns · Potions · Keybinds · ArmorHud · TabList | 26 палитр · шрифт Montserrat · меню Minecraft в стиле Duck · Freelook · Zoom · MotionBlur · **Saturation** |
+
+🍏 **Меню в стиле macOS:** окно из матового стекла с «светофором», боковая панель с поиском и иконками, переключатели как в iOS, русские описания. Стеклянный HUD (FPS, пинг, TPS сервера, время), главное меню с размытой панорамой и дождём. Пакетная отрисовка: новое меню не медленнее старого даже без видеокарты.
 
 👕 **Косметика:** 16 плащей, 9 масок и 8 PvP-скинов (или свой PNG) в стиле Duck. Выбираешь в **гардеробе** на [duckvisual.ru](https://duckvisual.ru/wardrobe.php) или прямо в лаунчере, и тебя в них видят все игроки с Duck Visual, даже на пиратских серверах.
 

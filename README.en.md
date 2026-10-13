@@ -46,11 +46,13 @@ The interface is in Russian; module names are in English.
 </tr>
 </table>
 
-**65 modules**, all configurable and bindable:
+**68 modules**, all configurable and bindable:
 
 | Combat | Players & world | HUD | Style |
 |---|---|---|---|
 | TargetESP · Trajectories · CritIndicator · DamageIndicators · Hitmarker · HitParticles · KillEffects · TargetCircle | Nametags · HealthTags · GlowESP · BoxESP · Tracers · ChinaHat · JumpCircles · CustomSky · WorldParticles | Watermark · ArrayList · TargetHud · **Music** · Cooldowns · Potions · Keybinds · ArmorHud · TabList | 26 palettes · Montserrat font · Duck-styled Minecraft UI · Freelook · Zoom · MotionBlur · **Saturation** |
+
+🍏 **macOS-style menu:** a frosted glass window with traffic lights, a sidebar with search and icons, iOS switches. Glass HUD (FPS, ping, server TPS, time) and a title screen with a blurred panorama and rain. Batched drawing keeps the new menu as fast as the old one even without a GPU.
 
 👕 **Cosmetics:** 16 capes, 9 masks and 8 PvP skins (or your own PNG) in Duck style. Pick them in the **wardrobe** on [duckvisual.ru](https://duckvisual.ru/wardrobe.php) or right in the launcher, and every player with Duck Visual sees them, even on offline-mode servers.
 

@@ -118,7 +118,7 @@ func runSetup() bool {
 		return true // no WebView2: runUI explains how to get it
 	}
 	defer w.Destroy()
-	w.SetSize(560, 580, webview2.HintFixed)
+	fitWindow(w, 560, 600)
 	runHere := false
 	quit := func() { w.Dispatch(func() { w.Terminate() }) }
 

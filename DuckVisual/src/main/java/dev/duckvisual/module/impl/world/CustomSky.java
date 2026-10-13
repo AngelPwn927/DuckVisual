@@ -28,6 +28,9 @@ public class CustomSky extends Module {
     private final BooleanSetting aurora = add(new BooleanSetting("Aurora", true));
     private final NumberSetting stars = add(new NumberSetting("Stars", 900, 0, 3000, 50));
     private final NumberSetting auroraStrength = add(new NumberSetting("Aurora Strength", 1, 0.2, 2, 0.1));
+    /** faint stars on the blue day sky (the dreamy look of client screenshots) */
+    private final BooleanSetting dayStars = add(new BooleanSetting("Day Stars", true));
+    private final BooleanSetting rainbow = add(new BooleanSetting("Rainbow", true));
 
     private float[] starData;
     private int starCount = -1;
@@ -64,14 +67,20 @@ public class CustomSky extends Module {
         if (mc.world.getRegistryKey() != World.OVERWORLD) return;
         float night = mc.world.getStarBrightness(r.tickDelta()) * 2; // 0 day .. ~1 night
         float vis = nightOnly.get() ? MathHelper.clamp(night, 0, 1) : 1;
-        if (vis <= 0.01f) return;
+        float day = 1 - MathHelper.clamp(night, 0, 1);
+        float rain = mc.world.getRainGradient(r.tickDelta());
+        float starVis = dayStars.get() ? Math.max(vis, 0.55f * (1 - rain)) : vis;
+        if (rainbow.get() && day > 0.05f) {
+            rainbowArc(r.matrices().peek().getPositionMatrix(), mc.options.getClampedViewDistance() * 16 * 2.1f, day * (1 - rain * 0.7f));
+        }
+        if (starVis <= 0.01f) return;
         if (starCount != stars.getInt()) buildStars();
 
         float radius = mc.options.getClampedViewDistance() * 16 * 2.2f;
         Matrix4f m = r.matrices().peek().getPositionMatrix();
         double t = System.currentTimeMillis() / 1000.0;
 
-        if (mode.is("Night")) {
+        if (mode.is("Night") && vis > 0.01f) {
             Fog fog = RenderSystem.getShaderFog();
             int horizon = ColorUtil.rgba((int) (fog.red() * 255), (int) (fog.green() * 255), (int) (fog.blue() * 255), (int) (255 * vis));
             int zenith = ColorUtil.withAlpha(ColorUtil.lerp(0xFF03030A, ColorUtil.theme(), 0.06f), (int) (255 * vis));
@@ -91,7 +100,7 @@ public class CustomSky extends Module {
                 float x = x0 * cos - z0 * sin, z = x0 * sin + z0 * cos;
                 float tw = 0.55f + 0.45f * (float) Math.sin(t * 2.2 + starData[i * 5 + 4]);
                 float s = starData[i * 5 + 3] * radius * 0.003f;
-                int c = ColorUtil.withAlpha(i % 9 == 0 ? ColorUtil.theme(i) : 0xFFFFFFFF, (int) (255 * tw * vis * Math.min(1, Math.max(0, y0 + 0.05) * 5)));
+                int c = ColorUtil.withAlpha(i % 9 == 0 ? ColorUtil.theme(i) : 0xFFFFFFFF, (int) (255 * tw * starVis * Math.min(1, Math.max(0, y0 + 0.05) * 5)));
                 float px = x * radius, py = y0 * radius, pz = z * radius;
                 // camera-facing quad (billboard), like vanilla particles
                 float rx = right.x * s, ry = right.y * s, rz = right.z * s;
@@ -106,7 +115,7 @@ public class CustomSky extends Module {
             Render3D.additive(false);
         }
 
-        if (aurora.get()) auroraBands(m, radius, t, vis);
+        if (aurora.get() && vis > 0.01f) auroraBands(m, radius, t, vis);
     }
 
     /** Sphere with a vertical gradient: horizon → mid → zenith, and dark below the horizon. */
@@ -127,6 +136,40 @@ public class CustomSky extends Module {
             }
             Render3D.draw(b);
         }
+    }
+
+    private static final int[] RAINBOW = {0xFFFF3B3B, 0xFFFF8A1F, 0xFFFFE03B, 0xFF4CE06A, 0xFF3BA8FF, 0xFF5B5CFF, 0xFFA05BFF};
+
+    /** Soft rainbow arc low in the northern sky (additive, fades into the horizon). */
+    private void rainbowArc(Matrix4f m, float radius, float vis) {
+        org.joml.Vector3f axis = new org.joml.Vector3f(0, -0.12f, -1).normalize();
+        org.joml.Vector3f east = new org.joml.Vector3f(1, 0, 0);
+        org.joml.Vector3f up = new org.joml.Vector3f(axis).cross(east).negate().normalize();
+        Render3D.additive(true);
+        int seg = 64;
+        float base = (float) Math.toRadians(40), step = (float) Math.toRadians(0.9);
+        for (int band = 0; band <= RAINBOW.length; band++) {
+            BufferBuilder b = Render3D.buffer(VertexFormat.DrawMode.TRIANGLE_STRIP);
+            float a1 = base + step * (band - 1), a2 = base + step * band;
+            for (int i = 0; i <= seg; i++) {
+                double th = Math.PI * i / seg;
+                float edge = MathHelper.clamp((float) Math.sin(th) * 2.2f, 0, 1);
+                for (int k = 0; k < 2; k++) {
+                    int ci = band - (k == 0 ? 1 : 0);
+                    int col = ci < 0 || ci >= RAINBOW.length ? 0 : (int) (60 * vis * edge);
+                    int c = ColorUtil.withAlpha(RAINBOW[Math.max(0, Math.min(RAINBOW.length - 1, ci))], col);
+                    float ang = k == 0 ? a1 : a2;
+                    float cs = (float) Math.cos(ang), sn = (float) Math.sin(ang);
+                    float ex = (float) Math.cos(th) * sn, uy = (float) Math.sin(th) * sn;
+                    float x = axis.x * cs + east.x * ex + up.x * uy;
+                    float y = axis.y * cs + east.y * ex + up.y * uy;
+                    float z = axis.z * cs + east.z * ex + up.z * uy;
+                    b.vertex(m, x * radius, y * radius, z * radius).color(c);
+                }
+            }
+            Render3D.draw(b);
+        }
+        Render3D.additive(false);
     }
 
     /** Three waving translucent curtains in theme colors. */

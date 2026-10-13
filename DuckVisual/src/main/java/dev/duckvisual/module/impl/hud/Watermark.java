@@ -5,19 +5,26 @@ import dev.duckvisual.module.HudModule;
 import dev.duckvisual.setting.BooleanSetting;
 import dev.duckvisual.util.ColorUtil;
 import dev.duckvisual.util.Render2D;
+import dev.duckvisual.util.Tps;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.PlayerListEntry;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
+/** macOS-style menu bar pill: logo, then FPS, ping, TPS, time and players as label/value segments. */
 public class Watermark extends HudModule {
     private final BooleanSetting showFps = add(new BooleanSetting("FPS", true));
     private final BooleanSetting showPing = add(new BooleanSetting("Ping", true));
+    private final BooleanSetting showTps = add(new BooleanSetting("TPS", true));
     private final BooleanSetting showTime = add(new BooleanSetting("Time", true));
-    private final BooleanSetting showName = add(new BooleanSetting("Nickname", true));
+    private final BooleanSetting showPlayers = add(new BooleanSetting("Players", false));
+    private final BooleanSetting showName = add(new BooleanSetting("Nickname", false));
 
-    private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm");
+    private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private static final int LABEL = 0xFF98989F, VALUE = 0xFFF2F2F7;
 
     public Watermark() {
         super("Watermark", "Client logo with info", 5, 5);
@@ -30,36 +37,40 @@ public class Watermark extends HudModule {
 
     @Override
     public void onRender2D(DrawContext ctx, float td) {
-        StringBuilder info = new StringBuilder();
-        if (showName.get()) info.append(mc.getSession().getUsername());
-        if (showFps.get()) sep(info).append(mc.getCurrentFps()).append(" fps");
+        List<String[]> seg = new ArrayList<>();
+        if (showName.get()) seg.add(new String[]{"", mc.getSession().getUsername()});
+        if (showFps.get()) seg.add(new String[]{"FPS ", String.valueOf(mc.getCurrentFps())});
         if (showPing.get()) {
             PlayerListEntry e = mc.getNetworkHandler() == null ? null : mc.getNetworkHandler().getPlayerListEntry(mc.player.getUuid());
-            sep(info).append(e == null ? 0 : e.getLatency()).append(" ms");
+            seg.add(new String[]{"Ping ", (e == null ? 0 : e.getLatency()) + "ms"});
         }
-        if (showTime.get()) sep(info).append(LocalTime.now().format(TIME));
+        if (showTps.get()) seg.add(new String[]{"TPS ", String.format("%.1f", Tps.get())});
+        if (showTime.get()) seg.add(new String[]{"", LocalTime.now().format(TIME)});
+        if (showPlayers.get() && mc.getNetworkHandler() != null) seg.add(new String[]{"Online ", String.valueOf(mc.getNetworkHandler().getPlayerList().size())});
 
         String logo = DuckVisual.NAME;
         float x = getX(), y = getY();
-        float iconSize = 13;
-        float logoW = Render2D.width(logo);
-        float infoW = info.length() > 0 ? Render2D.width(info.toString()) + 12 : 0;
-        width = 6 + iconSize + 4 + logoW + infoW + 6;
+        float icon = 12;
+        float w = 7 + icon + 4 + Render2D.width(logo) + 7;
+        for (String[] s : seg) w += 9 + Render2D.width(s[0] + s[1]);
+        width = w;
         height = 19;
 
         panel(ctx, x, y, width, height);
-        duck(ctx, x + 5, y + 3, iconSize);
-        Render2D.gradientText(ctx, logo, x + 6 + iconSize + 4, y + 6, 0);
-        if (infoW > 0) {
-            float sx = x + 6 + iconSize + 4 + logoW + 5;
-            Render2D.rect(ctx, sx, y + 5, 1, height - 10, 0x40FFFFFF);
-            Render2D.text(ctx, info.toString(), sx + 6, y + 6, 0xFFD0D0D8);
+        duck(ctx, x + 7, y + 3.5f, icon);
+        float cx = x + 7 + icon + 4;
+        Render2D.gradientText(ctx, logo, cx, y + 6, 0);
+        cx += Render2D.width(logo) + 4;
+        for (String[] s : seg) {
+            Render2D.rect(ctx, cx, y + 5, 1, height - 10, 0x26FFFFFF);
+            cx += 5;
+            if (!s[0].isEmpty()) {
+                Render2D.text(ctx, s[0], cx, y + 6, LABEL);
+                cx += Render2D.width(s[0]);
+            }
+            Render2D.text(ctx, s[1], cx, y + 6, VALUE);
+            cx += Render2D.width(s[1]) + 4;
         }
-    }
-
-    private static StringBuilder sep(StringBuilder sb) {
-        if (sb.length() > 0) sb.append(" · ");
-        return sb;
     }
 
     /** Tiny vector duck used as the logo. */

@@ -13,7 +13,7 @@ func TestDuckVisualLight(t *testing.T) {
 	}
 	path := filepath.Join(dir, "config", "duckvisual.json")
 	os.MkdirAll(filepath.Dir(path), 0o755)
-	os.WriteFile(path, []byte(`{"ClickGui":{"enabled":false,"key":344,"settings":{"Blur":true,"Descriptions":true}},"MainMenu":{"enabled":true,"key":-1,"settings":{"Particles":true}}}`), 0o644)
+	os.WriteFile(path, []byte(`{"ClickGui":{"enabled":false,"key":344,"settings":{"Blur":true,"Descriptions":true}},"MainMenu":{"enabled":true,"key":-1,"settings":{"Particles":true,"Weather":"Rain"}},"WorldParticles":{"enabled":true,"key":-1,"settings":{}}}`), 0o644)
 	if !duckVisualLight(dir, "potato") {
 		t.Fatal("existing config must be updated")
 	}
@@ -21,13 +21,16 @@ func TestDuckVisualLight(t *testing.T) {
 	readJSON(path, &cfg)
 	gui := cfg["ClickGui"]["settings"].(map[string]any)
 	menu := cfg["MainMenu"]["settings"].(map[string]any)
-	if gui["Blur"] != false || menu["Particles"] != false || gui["Descriptions"] != true || cfg["ClickGui"]["key"] != float64(344) {
-		t.Fatalf("potato must switch off blur and menu particles only, got %v", cfg)
+	if _, old := gui["Blur"]; old || gui["Blur Background"] != false || gui["Glass HUD"] != false || menu["Particles"] != false ||
+		menu["Weather"] != "None" || cfg["WorldParticles"]["enabled"] != false || gui["Descriptions"] != true || cfg["ClickGui"]["key"] != float64(344) {
+		t.Fatalf("potato must switch off only the heavy effects, got %v", cfg)
 	}
 	duckVisualLight(dir, "balanced")
 	readJSON(path, &cfg)
-	if cfg["ClickGui"]["settings"].(map[string]any)["Blur"] != true {
-		t.Fatal("leaving potato must bring the blur back")
+	gui = cfg["ClickGui"]["settings"].(map[string]any)
+	menu = cfg["MainMenu"]["settings"].(map[string]any)
+	if gui["Glass HUD"] != true || menu["Weather"] != "Rain" || gui["Blur Background"] != false {
+		t.Fatalf("leaving potato must bring the glass HUD and menu rain back, got %v", cfg)
 	}
 }
 

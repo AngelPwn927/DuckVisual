@@ -63,6 +63,9 @@ public class ModuleManager {
         add(new ArmorHud());
         add(new Cooldowns());
         add(new CustomHotbar());
+        add(new Keystrokes());
+        add(new InventoryHud());
+        add(new ItemCounter());
         add(new LowHealth());
         add(new CombatInfo());
         add(new TabList());

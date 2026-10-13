@@ -7,6 +7,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
+import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -32,5 +34,15 @@ public class ClientPlayNetworkHandlerMixin {
         if (!tc.isEnabled()) return;
         Entity e = packet.getEntity(mc.world);
         if (e != null) tc.onStatus(e, packet.getStatus());
+    }
+
+    @Inject(method = "onWorldTimeUpdate", at = @At("HEAD"))
+    private void duck$tps(WorldTimeUpdateS2CPacket packet, CallbackInfo ci) {
+        if (MinecraftClient.getInstance().isOnThread()) dev.duckvisual.util.Tps.onTimeUpdate();
+    }
+
+    @Inject(method = "onGameJoin", at = @At("HEAD"))
+    private void duck$join(GameJoinS2CPacket packet, CallbackInfo ci) {
+        if (MinecraftClient.getInstance().isOnThread()) dev.duckvisual.util.Tps.reset();
     }
 }

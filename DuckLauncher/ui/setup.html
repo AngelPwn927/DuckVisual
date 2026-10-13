@@ -10,7 +10,9 @@
     --grad: linear-gradient(135deg, var(--accent1), var(--accent2));
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; overflow: hidden; }
+  html { height: 100%; }
+  /* if the window is still too small (old Windows, odd DPI), scroll instead of cutting off the button */
+  body { min-height: 100%; overflow-x: hidden; }
   body { background: radial-gradient(520px 260px at 50% -40px, rgba(255,150,40,.18), transparent 70%), var(--bg); color: var(--text);
          font: 14px "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; user-select: none; -webkit-user-select: none;
          display: flex; flex-direction: column; padding: 26px 28px 22px; }
