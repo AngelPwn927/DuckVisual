@@ -338,6 +338,24 @@ func Install(version, loader string, progress Progress) (*Installed, error) {
 	if err := DownloadAll("meta", []Task{{URL: v.AssetIndex.URL, Path: idxPath, Sha1: v.AssetIndex.Sha1, Size: v.AssetIndex.Size}}, 1, nil); err != nil {
 		return nil, fmt.Errorf("asset index: %w", err)
 	}
+	// Checking ~4000 asset files costs seconds on Windows with an antivirus, so once they are
+	// all in place a marker skips the check on later launches.
+	assetsOK := filepath.Join(AssetsDir(), "indexes", v.AssetIndex.ID+".ok")
+	if b, err := os.ReadFile(assetsOK); err != nil || strings.TrimSpace(string(b)) != v.AssetIndex.Sha1 {
+		if err := downloadAssets(idxPath, progress); err != nil {
+			return nil, err
+		}
+		os.WriteFile(assetsOK, []byte(v.AssetIndex.Sha1), 0o644)
+	}
+	major := v.JavaVersion.MajorVersion
+	if major == 0 {
+		major = 8
+	}
+	return &Installed{Version: version, Loader: loader, Vanilla: &v, Fabric: fab, Classpath: classpath,
+		Natives: natives, LogConfig: logCfg, JavaMajor: major}, nil
+}
+
+func downloadAssets(idxPath string, progress Progress) error {
 	var idx struct {
 		Objects map[string]struct {
 			Hash string `json:"hash"`
@@ -345,7 +363,7 @@ func Install(version, loader string, progress Progress) (*Installed, error) {
 		} `json:"objects"`
 	}
 	if !readJSON(idxPath, &idx) {
-		return nil, fmt.Errorf("bad asset index")
+		return fmt.Errorf("bad asset index")
 	}
 	var assetTasks []Task
 	for _, o := range idx.Objects {
@@ -357,14 +375,9 @@ func Install(version, loader string, progress Progress) (*Installed, error) {
 		})
 	}
 	if err := DownloadAll("assets", assetTasks, 16, progress); err != nil {
-		return nil, fmt.Errorf("assets: %w", err)
+		return fmt.Errorf("assets: %w", err)
 	}
-	major := v.JavaVersion.MajorVersion
-	if major == 0 {
-		major = 8
-	}
-	return &Installed{Version: version, Loader: loader, Vanilla: &v, Fabric: fab, Classpath: classpath,
-		Natives: natives, LogConfig: logCfg, JavaMajor: major}, nil
+	return nil
 }
 
 func extractNatives(jar, dest string) error {

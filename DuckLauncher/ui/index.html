@@ -289,7 +289,6 @@
           <div class="seg" id="preset"><button data-v="auto">Авто</button><button data-v="fps">Максимум FPS</button><button data-v="balanced">Баланс</button><button data-v="quality">Качество</button><button data-v="none">Не трогать</button></div></div>
         <div class="row"><div>Высокий приоритет игры<small>Windows отдаёт игре процессор раньше фоновых программ — меньше фризов</small></div><button class="switch" id="highPriority"></button></div>
         <div class="row"><div>Мощная видеокарта<small>На ноутбуках игра запускается на дискретной видеокарте (NVIDIA / AMD), а не на встроенной</small></div><button class="switch" id="dgpu"></button></div>
-        <div class="row"><div>Быстрый запуск<small>Java кэширует классы игры: со второго запуска игра открывается быстрее</small></div><button class="switch" id="fastStart"></button></div>
         <div class="row"><div>Оперативная память<small id="ramHint">Авто — подбирается под твой компьютер</small></div>
           <div style="display:flex;align-items:center;gap:10px"><button class="btn" id="ramAuto">Авто</button><input type="range" id="ram" min="1024" step="256"><b id="ramVal" style="width:64px;text-align:right"></b></div></div>
       </div>
@@ -440,7 +439,7 @@ async function refresh() {
   $('#ram').value = st.memoryMb || st.autoMemoryMb; ramLabel();
   $$('#preset button').forEach(b => b.classList.toggle('on', b.dataset.v === st.preset));
   presetHint();
-  ['highPriority', 'dgpu', 'fastStart'].forEach(k => $('#' + k).classList.toggle('on', !!st[k]));
+  ['highPriority', 'dgpu'].forEach(k => $('#' + k).classList.toggle('on', !!st[k]));
   $('#fullscreen').classList.toggle('on', st.fullscreen);
   $('#width').value = st.width; $('#height').value = st.height;
   $('#lang').value = st.lang;
@@ -482,7 +481,7 @@ function settingsData() {
   const after = [...$$('#after button')].find(b => b.classList.contains('on'));
   return {
     memoryMb: st.memoryMb || 0, mods, preset: ([...$$('#preset button')].find(b => b.classList.contains('on')) || {dataset: {v: st.preset}}).dataset.v,
-    highPriority: $('#highPriority').classList.contains('on'), dgpu: $('#dgpu').classList.contains('on'), fastStart: $('#fastStart').classList.contains('on'),
+    highPriority: $('#highPriority').classList.contains('on'), dgpu: $('#dgpu').classList.contains('on'),
     width: parseInt($('#width').value) || 1280, height: parseInt($('#height').value) || 720,
     fullscreen: $('#fullscreen').classList.contains('on'), lang: $('#lang').value,
     afterLaunch: after ? after.dataset.v : 'minimize', jvmArgs: $('#jvm').value
@@ -505,7 +504,7 @@ function presetHint() { const v = ([...$$('#preset button')].find(b => b.classLi
   $('#presetHint').textContent = (presetText[v] || presetText.none)() + (v !== 'none' ? '. Применяется при следующем запуске, дальше можно менять в игре.' : ''); }
 $$('#preset button').forEach(b => b.onclick = () => { $$('#preset button').forEach(x => x.classList.remove('on')); b.classList.add('on'); presetHint(); save(); });
 $('#modsAll').onclick = () => { $$('[data-mod]').forEach(x => x.classList.add('on')); save(); };
-['#highPriority', '#dgpu', '#fastStart', '#fullscreen'].forEach(id => $(id).onclick = () => { $(id).classList.toggle('on'); save(); });
+['#highPriority', '#dgpu', '#fullscreen'].forEach(id => $(id).onclick = () => { $(id).classList.toggle('on'); save(); });
 $$('#after button').forEach(b => b.onclick = () => { $$('#after button').forEach(x => x.classList.remove('on')); b.classList.add('on'); save(); });
 $('#ram').oninput = () => { st.memoryMb = +$('#ram').value; ramLabel(); };
 $('#ram').onchange = save;

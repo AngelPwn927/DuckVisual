@@ -142,8 +142,8 @@ func Prepare(cfg *Config, totalMemMB int, progress Progress) (*exec.Cmd, string,
 		}
 	}
 
-	cds := filepath.Join(BaseDir(), "cache", "cds", fmt.Sprintf("%s-%s-j%d", cfg.Version, cfg.Loader, inst.JavaMajor))
-	args := jvmFlags(memory, inst.JavaMajor, cds, cfg.FastStart)
+	os.RemoveAll(filepath.Join(BaseDir(), "cache", "cds")) // class archives of launcher 1.3 (slowed the start down)
+	args := jvmFlags(memory)
 	if authlib != "" {
 		args = append(args, "-javaagent:"+authlib+"=ely.by")
 	}

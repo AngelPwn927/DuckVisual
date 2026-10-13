@@ -130,7 +130,10 @@ func applyPreset(gameDir, version, preset string, sodium bool) {
 
 // jvmFlags are tuned G1 settings for a smooth client: short pauses, young-generation heavy
 // (Minecraft allocates lots of short-lived objects every frame), no sync with perf counters.
-func jvmFlags(memoryMB, javaMajor int, cacheDir string, fastStart bool) []string {
+// No -XX:+AutoCreateSharedArchive: with Minecraft's long classpath it made the JVM spend
+// minutes in startup before the game even began loading (and Fabric's classes can't be
+// archived anyway, so it never paid off).
+func jvmFlags(memoryMB int) []string {
 	region := "8M"
 	if memoryMB >= 4096 {
 		region = "16M"
@@ -146,11 +149,6 @@ func jvmFlags(memoryMB, javaMajor int, cacheDir string, fastStart bool) []string
 		"-XX:+PerfDisableSharedMem", "-XX:+UseStringDeduplication",
 		"-Djava.net.preferIPv4Stack=true", // faster server connect on networks with broken IPv6
 		"-Dfile.encoding=UTF-8", "-Dduck.launcher=" + LauncherVersion,
-	}
-	if javaMajor >= 19 && fastStart && cacheDir != "" {
-		// AppCDS: the JVM stores parsed classes after the first run; later starts are faster
-		os.MkdirAll(cacheDir, 0o755)
-		f = append(f, "-XX:+AutoCreateSharedArchive", "-XX:SharedArchiveFile="+filepath.Join(cacheDir, "classes.jsa"), "-Xlog:cds*=off")
 	}
 	return f
 }

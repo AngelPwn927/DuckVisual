@@ -18,7 +18,7 @@ type Config struct {
 	Preset      string          `json:"preset"`   // graphics profile: none, auto, fps, balanced, quality
 	HighPrio    bool            `json:"highPriority"`
 	DGPU        bool            `json:"dgpu"`     // prefer the discrete GPU on laptops
-	FastStart   bool            `json:"fastStart"` // Java class data sharing cache
+	FastStart   bool            `json:"fastStart"` // legacy: Java class cache of launcher 1.3, no longer used
 	ModsRev     int             `json:"modsRev"`  // bumps when new performance mods are added
 	Width       int             `json:"width"`
 	Height      int             `json:"height"`

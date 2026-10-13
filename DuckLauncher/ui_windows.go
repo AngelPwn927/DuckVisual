@@ -121,7 +121,6 @@ type state struct {
 	Preset      string             `json:"preset"`
 	HighPrio    bool               `json:"highPriority"`
 	DGPU        bool               `json:"dgpu"`
-	FastStart   bool               `json:"fastStart"`
 	Width       int                `json:"width"`
 	Height      int                `json:"height"`
 	Fullscreen  bool               `json:"fullscreen"`
@@ -146,7 +145,7 @@ func (a *app) state() state {
 	total := totalMemoryMB()
 	return state{Account: safe, Version: c.Version, Loader: c.Loader, DuckVersion: core.DuckVersion,
 		MemoryMB: c.MemoryMB, AutoMemory: core.AutoMemoryMB(total), MaxMemoryMB: total, Mods: c.Mods, PerfMods: core.PerfMods,
-		Preset: c.Preset, HighPrio: c.HighPrio, DGPU: c.DGPU, FastStart: c.FastStart, Width: c.Width, Height: c.Height, Fullscreen: c.Fullscreen, Lang: c.Lang,
+		Preset: c.Preset, HighPrio: c.HighPrio, DGPU: c.DGPU, Width: c.Width, Height: c.Height, Fullscreen: c.Fullscreen, Lang: c.Lang,
 		AfterLaunch: c.AfterLaunch, JVMArgs: c.JVMArgs, CFKey: c.CFKey != "", Running: a.running, Busy: a.busy,
 		AppVersion: core.LauncherVersion, Dir: core.BaseDir()}
 }
@@ -205,7 +204,6 @@ type settings struct {
 	Preset      string          `json:"preset"`
 	HighPrio    bool            `json:"highPriority"`
 	DGPU        bool            `json:"dgpu"`
-	FastStart   bool            `json:"fastStart"`
 	Width       int             `json:"width"`
 	Height      int             `json:"height"`
 	Fullscreen  bool            `json:"fullscreen"`
@@ -230,7 +228,7 @@ func (a *app) saveSettings(s settings) {
 		c.Preset = s.Preset
 	}
 	c.WeakPC = false
-	c.HighPrio, c.DGPU, c.FastStart = s.HighPrio, s.DGPU, s.FastStart
+	c.HighPrio, c.DGPU = s.HighPrio, s.DGPU
 	if s.Width >= 320 && s.Height >= 240 {
 		c.Width, c.Height = s.Width, s.Height
 	}
