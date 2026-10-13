@@ -70,6 +70,15 @@ func LoadConfig() *Config {
 		}
 		c.ModsRev = 2
 	}
+	if c.ModsRev < 3 {
+		// launcher 1.5 added more mods: switch them on for existing players too
+		for slug, on := range DefaultMods() {
+			if _, known := c.Mods[slug]; !known {
+				c.Mods[slug] = on
+			}
+		}
+		c.ModsRev = 3
+	}
 	if c.Preset == "" {
 		c.Preset = "none" // players updating from 1.2 keep their own graphics settings
 		if fresh {

@@ -9,7 +9,7 @@
       "0409": {
         "identity": {
           "name": "DuckLauncher",
-          "version": "1.4.0.0"
+          "version": "1.5.0.0"
         },
         "description": "Duck Launcher",
         "minimum-os": "win10",
@@ -23,16 +23,16 @@
     "#1": {
       "0000": {
         "fixed": {
-          "file_version": "1.4.0.0",
-          "product_version": "1.4.0.0"
+          "file_version": "1.5.0.0",
+          "product_version": "1.5.0.0"
         },
         "info": {
           "0409": {
             "CompanyName": "Duck Visual",
             "FileDescription": "Duck Launcher",
-            "FileVersion": "1.4.0",
+            "FileVersion": "1.5.0",
             "ProductName": "Duck Launcher",
-            "ProductVersion": "1.4.0",
+            "ProductVersion": "1.5.0",
             "OriginalFilename": "Duck Launcher.exe",
             "InternalName": "DuckLauncher",
             "LegalCopyright": "(c) Duck Visual. Not an official Minecraft product.",

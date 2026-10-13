@@ -9,9 +9,11 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"syscall"
+	"time"
 	"unsafe"
 
 	"ducklauncher/core"
@@ -102,6 +104,8 @@ func runUI() {
 	w.Bind("dlModsInstalled", a.modsInstalled)
 	w.Bind("dlModInstall", a.modInstall)
 	w.Bind("dlModRemove", a.modRemove)
+	w.Bind("dlFix", a.fix)
+	w.Bind("dlOpenLog", a.openLog)
 	w.SetHtml(strings.Replace(indexHTML, "{{HERO}}", base64.StdEncoding.EncodeToString(heroJPG), 1))
 	w.Run()
 }
@@ -123,6 +127,7 @@ type state struct {
 	Mods        map[string]bool    `json:"mods"`
 	PerfMods    []core.OptionalMod `json:"perfMods"`
 	Preset      string             `json:"preset"`
+	AutoPreset  string             `json:"autoPreset"`
 	HighPrio    bool               `json:"highPriority"`
 	DGPU        bool               `json:"dgpu"`
 	Width       int                `json:"width"`
@@ -136,6 +141,7 @@ type state struct {
 	Busy        bool               `json:"busy"`
 	AppVersion  string             `json:"appVersion"`
 	Dir         string             `json:"dir"`
+	PC          pcInfo             `json:"pc"`
 }
 
 func (a *app) state() state {
@@ -149,9 +155,9 @@ func (a *app) state() state {
 	total := totalMemoryMB()
 	return state{Account: safe, Version: c.Version, Loader: c.Loader, DuckVersion: core.DuckVersion,
 		MemoryMB: c.MemoryMB, AutoMemory: core.AutoMemoryMB(total), MaxMemoryMB: total, Mods: c.Mods, PerfMods: core.PerfMods,
-		Preset: c.Preset, HighPrio: c.HighPrio, DGPU: c.DGPU, Width: c.Width, Height: c.Height, Fullscreen: c.Fullscreen, Lang: c.Lang,
+		Preset: c.Preset, AutoPreset: core.ResolvePreset("auto", total), HighPrio: c.HighPrio, DGPU: c.DGPU, Width: c.Width, Height: c.Height, Fullscreen: c.Fullscreen, Lang: c.Lang,
 		AfterLaunch: c.AfterLaunch, JVMArgs: c.JVMArgs, CFKey: c.CFKey != "", Running: a.running, Busy: a.busy,
-		AppVersion: core.LauncherVersion, Dir: core.BaseDir()}
+		AppVersion: core.LauncherVersion, Dir: core.BaseDir(), PC: readPC()}
 }
 
 func (a *app) versions() ([]core.GameVersion, error) {
@@ -228,7 +234,7 @@ func (a *app) saveSettings(s settings) {
 		c.Mods = s.Mods
 	}
 	switch s.Preset {
-	case "none", "auto", "fps", "balanced", "quality":
+	case "none", "auto", "potato", "fps", "balanced", "quality":
 		c.Preset = s.Preset
 	}
 	c.WeakPC = false
@@ -248,6 +254,47 @@ func (a *app) saveSettings(s settings) {
 		c.CFKey = strings.TrimSpace(*s.CFKey)
 	}
 	c.Save()
+}
+
+// fix applies the one-click fix the crash doctor suggested and says what changed.
+func (a *app) fix(id string) string {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	c := a.cfg
+	total := totalMemoryMB()
+	cur := c.MemoryMB
+	if cur == 0 {
+		cur = core.AutoMemoryMB(total)
+	}
+	gb := func(mb int) string { return strconv.FormatFloat(float64(mb)/1024, 'f', 1, 64) + " ГБ" }
+	switch id {
+	case "memory_up":
+		next := min(cur+1024, total*3/4/256*256)
+		if next <= cur {
+			return "Больше памяти этому ПК не дать. Закрой браузер и другие программы перед игрой."
+		}
+		c.MemoryMB = next
+	case "memory_down":
+		c.MemoryMB = max(1024, min(core.AutoMemoryMB(total), cur-1024))
+	case "potato":
+		c.Preset = "potato"
+		c.Save()
+		return "Включён профиль «Тапок». Нажми «Играть»."
+	case "drivers":
+		exec.Command("rundll32", "url.dll,FileProtocolHandler", "ms-settings:windowsupdate").Start()
+		return "Открыл Центр обновления Windows: установи обновления, в том числе необязательные (драйверы), и перезагрузи ПК."
+	default:
+		return ""
+	}
+	c.Save()
+	return "Готово: игре выделено " + gb(c.MemoryMB) + ". Нажми «Играть»."
+}
+
+// openLog opens a game log from the launcher's own logs folder in Notepad.
+func (a *app) openLog(path string) {
+	if rel, err := filepath.Rel(core.LogsDir(), path); err == nil && !strings.HasPrefix(rel, "..") && !filepath.IsAbs(rel) {
+		exec.Command("notepad.exe", path).Start()
+	}
 }
 
 func (a *app) open(kind string) {
@@ -381,7 +428,9 @@ func (a *app) launch(join string) string {
 	go func() {
 		a.mu.Lock()
 		a.cfg.QuickJoin = join
+		gameDir := core.InstanceDir(a.cfg.Version, a.cfg.Loader)
 		a.mu.Unlock()
+		started := time.Now()
 		cmd, logPath, err := core.Prepare(a.cfg, totalMemoryMB(), func(stage string, done, total int64) {
 			a.emit("onProgress", stage, done, total)
 		})
@@ -416,10 +465,12 @@ func (a *app) launch(join string) string {
 			a.showWindow(9) // SW_RESTORE
 		}
 		msg := ""
+		var diag *core.Diagnosis
 		if werr != nil {
 			msg = werr.Error()
+			diag = core.Diagnose(logPath, gameDir, started)
 		}
-		a.emit("onGameExit", msg, logPath)
+		a.emit("onGameExit", msg, logPath, diag)
 	}()
 	return ""
 }

@@ -33,16 +33,20 @@ var PerfMods = []OptionalMod{
 	{"entityculling", "NNAgCjsB", "EntityCulling", "Не рисует мобов и сундуки, которые не видно", "fps", true, ""},
 	{"immediatelyfast", "5ZwdcRci", "ImmediatelyFast", "Ускоряет отрисовку HUD, текста и предметов", "fps", true, ""},
 	{"badoptimizations", "g96Z4WVZ", "BadOptimizations", "Кэширует освещение, небо и цвета — меньше работы за кадр", "fps", true, ""},
+	{"particle-core", "RSeLon5O", "Particle Core", "Не рисует частицы за спиной и далеко — меньше лагов в бою и у взрывов", "fps", true, ""},
 	{"dynamic-fps", "LQ3K71Q1", "Dynamic FPS", "Снижает FPS в свёрнутой игре: ПК не греется, музыка в браузере не лагает", "fps", true, ""},
 	{"lithium", "gvQqBUqZ", "Lithium", "Оптимизирует физику, ИИ мобов и тики мира", "cpu", true, ""},
 	{"scalablelux", "Ps1zyz6x", "ScalableLux", "Быстрый движок освещения, чанки грузятся плавнее", "cpu", true, ""},
 	{"clumps", "Wnxd13zP", "Clumps", "Склеивает сферы опыта — нет лагов на фермах", "cpu", true, ""},
 	{"noisium", "KuNKN7d2", "Noisium", "Быстрее генерирует мир в одиночной игре", "cpu", true, ""},
+	{"fastquit", "x1hIzbuY", "FastQuit", "Выход из мира в меню мгновенно, мир сохраняется в фоне", "cpu", true, ""},
 	{"c2me-fabric", "VSNURh3q", "C2ME", "Многопоточная загрузка и генерация чанков (одиночная игра, бета)", "cpu", false, ""},
 	{"ferrite-core", "uXXizFIs", "FerriteCore", "Сильно уменьшает потребление оперативной памяти", "mem", true, ""},
 	{"modernfix", "nmDcB62a", "ModernFix", "Быстрый запуск игры и ещё меньше памяти", "mem", true, ""},
 	{"ksyxis", "2ecVyZ49", "Ksyxis", "Мир загружается быстрее", "mem", true, ""},
+	{"lazy-language-loader", "Nz0RSWrF", "Lazy Language Loader", "Смена языка за секунду вместо долгой перезагрузки ресурсов", "mem", true, ""},
 	{"krypton", "fQEb0iXm", "Krypton", "Оптимизирует сеть — меньше нагрузка на серверах", "net", true, ""},
+	{"fast-ip-ping", "9mtu0sUO", "Fast IP Ping", "Список серверов пингуется мгновенно, без долгого «Опрос…»", "net", true, ""},
 }
 
 // DefaultMods is the toggle state of a fresh install.

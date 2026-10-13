@@ -194,6 +194,16 @@
   .dialog .field { margin-bottom: 10px; }
   .err { color: var(--danger); font-size: 12px; min-height: 16px; margin: 2px 0 10px; }
   .hint { color: var(--sub); font-size: 12px; margin-top: 12px; line-height: 1.5; }
+  /* crash doctor */
+  .doc-ico { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: rgba(255,85,102,.12); color: var(--danger); margin-bottom: 14px; }
+  .doc-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  #doctor .dialog { width: 440px; } #doctor .dialog > p { font-size: 13.5px; line-height: 1.55; color: #c3c3cf; }
+  /* my PC */
+  .pc { display: flex; align-items: center; gap: 14px; }
+  .pc .pc-ico { width: 42px; height: 42px; border-radius: 12px; background: var(--card2); display: grid; place-items: center; flex: none; color: var(--accent1); }
+  .pc b { display: block; font-size: 13.5px; } .pc small { display: block; color: var(--sub); font-size: 12px; margin-top: 2px; line-height: 1.45; }
+  .pc .pc-main { flex: 1; min-width: 0; }
+  .pc-warn { margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: rgba(255,85,102,.1); color: #ff8f9b; font-size: 12.5px; line-height: 1.5; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
   .toast { position: fixed; right: 20px; bottom: 20px; background: var(--card); border-left: 3px solid var(--danger); padding: 12px 16px; border-radius: 10px;
            max-width: 440px; display: none; z-index: 20; box-shadow: 0 10px 30px rgba(0,0,0,.4); font-size: 13px; }
   .toast.on { display: block; animation: fade .2s; }
@@ -283,10 +293,16 @@
   <section class="page" id="page-settings">
     <h2>Настройки</h2>
     <div class="scroll">
+      <div class="sec">Твой компьютер</div>
+      <div class="card" id="pcCard">
+        <div class="pc"><div class="pc-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
+          <div class="pc-main"><b id="pcCpu">—</b><small id="pcSpec"></small></div><button class="btn primary" id="pcApply" hidden></button></div>
+        <div class="pc-warn" id="pcWarn" hidden><span>Не установлен драйвер видеокарты: Windows рисует игру «вручную», и она будет очень медленной. Установи драйвер — FPS вырастет в разы.</span><button class="btn" id="pcDrivers">Обновить</button></div>
+      </div>
       <div class="sec">Производительность</div>
       <div class="card">
         <div class="row" style="display:block"><div style="margin-bottom:10px">Профиль графики<small id="presetHint"></small></div>
-          <div class="seg" id="preset"><button data-v="auto">Авто</button><button data-v="fps">Максимум FPS</button><button data-v="balanced">Баланс</button><button data-v="quality">Качество</button><button data-v="none">Не трогать</button></div></div>
+          <div class="seg" id="preset"><button data-v="auto">Авто</button><button data-v="potato">Тапок</button><button data-v="fps">Максимум FPS</button><button data-v="balanced">Баланс</button><button data-v="quality">Качество</button><button data-v="none">Не трогать</button></div></div>
         <div class="row"><div>Высокий приоритет игры<small>Windows отдаёт игре процессор раньше фоновых программ — меньше фризов</small></div><button class="switch" id="highPriority"></button></div>
         <div class="row"><div>Мощная видеокарта<small>На ноутбуках игра запускается на дискретной видеокарте (NVIDIA / AMD), а не на встроенной</small></div><button class="switch" id="dgpu"></button></div>
         <div class="row"><div>Оперативная память<small id="ramHint">Авто — подбирается под твой компьютер</small></div>
@@ -372,6 +388,15 @@
     <div class="hint" id="loginHint">Ник без лицензии работает на серверах с оффлайн-режимом (например FunTime). Скин виден только с Ely.by.</div>
   </div>
 </div>
+<div class="modal" id="doctor">
+  <div class="dialog">
+    <div class="doc-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 8v5M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div>
+    <h3 id="docTitle"></h3>
+    <p id="docText"></p>
+    <div class="doc-btns"><button class="btn primary" id="docFix" hidden></button><button class="btn" id="docLog">Открыть лог</button><button class="btn" id="docClose">Закрыть</button></div>
+    <div class="hint" id="docMsg"></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -446,6 +471,7 @@ async function refresh() {
   $$('#after button').forEach(b => b.classList.toggle('on', b.dataset.v === st.afterLaunch));
   $('#jvm').value = st.jvmArgs || '';
   $('#dir').textContent = st.dir;
+  renderPC();
   $('#cfKey').placeholder = st.cfKey ? 'Ключ сохранён (вставь новый, чтобы заменить; пусто — удалить)' : 'Вставь API-ключ CurseForge';
   const mc = $('#modsCard');
   mc.querySelectorAll('.row').forEach(r => r.remove());
@@ -494,7 +520,8 @@ $$('.nav button').forEach(b => b.onclick = () => {
   b.classList.add('on'); $('#page-' + b.dataset.page).classList.add('on');
 });
 const presetText = {
-  auto: () => 'Подбирается под твой ПК: ' + (st.maxMemoryMb <= 6144 ? '«Максимум FPS»' : '«Баланс»'),
+  auto: () => 'Подбирается под твой ПК: ' + ({ potato: '«Тапок»', fps: '«Максимум FPS»', balanced: '«Баланс»' }[st.autoPreset] || '«Баланс»'),
+  potato: () => 'Для самых слабых ПК: дальность 4, без анимации воды и огня, без облаков, звёзд и блюра меню, минимум частиц',
   fps: () => 'Дальность 6, быстрая графика и листва, без облаков, теней и блюра меню, минимум частиц',
   balanced: () => 'Дальность 10, красивая графика, быстрые облака, меньше частиц',
   quality: () => 'Дальность 16, всё красиво. Для мощных ПК',
@@ -593,11 +620,42 @@ window.onLaunched = () => {
   $('#stage').textContent = 'Игра запущена, приятной игры!'; $('#count').textContent = '';
   $('#fill').style.width = '100%'; $('#play').textContent = 'В ИГРЕ';
 };
-window.onGameExit = (err) => {
+window.onGameExit = (err, logPath, diag) => {
   $('#play').disabled = false; $('#play').textContent = 'ИГРАТЬ';
   $('#stage').textContent = err ? 'Игра закрылась с ошибкой' : 'Готов к игре'; $('#fill').style.width = '0%';
-  if (err) toast('Игра завершилась с ошибкой (' + err + '). Логи: Настройки → Папки → Логи');
+  if (err) showDoctor(diag, logPath);
 };
+
+/* ---------- crash doctor ---------- */
+const fixNames = { memory_up: 'Добавить памяти', memory_down: 'Поставить нужный объём', drivers: 'Обновить драйвер', mods: 'Открыть моды', potato: 'Включить «Тапок»' };
+function showDoctor(d, logPath) {
+  d = d || { title: 'Игра закрылась с ошибкой', text: 'Точную причину определить не удалось. Открой лог и пришли его в Telegram @DuckVisual — разберёмся. Если игра тормозила до вылета, попробуй профиль «Тапок».', fix: 'potato' };
+  $('#docTitle').textContent = d.title; $('#docText').textContent = d.text; $('#docMsg').textContent = '';
+  const fb = $('#docFix'); fb.hidden = !fixNames[d.fix]; fb.textContent = fixNames[d.fix] || ''; fb.disabled = false;
+  fb.onclick = async () => {
+    if (d.fix === 'mods') { $('#doctor').classList.remove('on'); $('[data-page=mods]').click(); return; }
+    fb.disabled = true; $('#docMsg').textContent = await dlFix(d.fix); refresh();
+  };
+  $('#docLog').hidden = !logPath; $('#docLog').onclick = () => dlOpenLog(logPath);
+  $('#doctor').classList.add('on');
+}
+$('#docClose').onclick = () => $('#doctor').classList.remove('on');
+$('#doctor').onclick = e => { if (e.target === $('#doctor')) $('#doctor').classList.remove('on'); };
+
+/* ---------- my PC ---------- */
+const presetNames = { potato: '«Тапок»', fps: '«Максимум FPS»', balanced: '«Баланс»', quality: '«Качество»' };
+function renderPC() {
+  const pc = st.pc || {};
+  $('#pcCpu').textContent = pc.cpu || 'Процессор: ' + (pc.cores || '?') + ' потоков';
+  const gpus = (pc.gpus || []).join(' + ') || 'видеокарта не определена';
+  $('#pcSpec').textContent = (pc.cores ? pc.cores + ' потоков · ' : '') + (pc.ramMb ? (pc.ramMb / 1024).toFixed(pc.ramMb % 1024 ? 1 : 0) + ' ГБ ОЗУ · ' : '') + gpus
+    + ' — подходит профиль ' + (presetNames[st.autoPreset] || '«Баланс»');
+  const ap = $('#pcApply'); ap.hidden = st.preset === st.autoPreset || st.preset === 'auto';
+  ap.textContent = 'Включить ' + (presetNames[st.autoPreset] || '');
+  ap.onclick = () => { $$('#preset button').forEach(b => b.classList.toggle('on', b.dataset.v === 'auto')); presetHint(); save(); setTimeout(refresh, 100); };
+  $('#pcWarn').hidden = !pc.noDriver;
+}
+$('#pcDrivers').onclick = async () => toast(await dlFix('drivers'));
 window.onError = (msg) => {
   $('#play').disabled = false; $('#play').textContent = 'ИГРАТЬ';
   $('#stage').textContent = 'Ошибка'; toast(msg);

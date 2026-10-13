@@ -76,7 +76,11 @@ func Prepare(cfg *Config, totalMemMB int, progress Progress) (*exec.Cmd, string,
 		setOptions(opts, map[string]string{"onboardAccessibility": "false", "guiScale": "2", "skipMultiplayerWarning": "true"})
 	}
 	sodium := cfg.Loader == "fabric" && cfg.Mods["sodium"]
-	applyPreset(gameDir, cfg.Version, ResolvePreset(cfg.Preset, totalMemMB), sodium)
+	preset := ResolvePreset(cfg.Preset, totalMemMB)
+	applyPreset(gameDir, cfg.Version, preset, sodium)
+	if cfg.Loader == "fabric" && cfg.Version == DuckVersion {
+		applyDuckPreset(gameDir, preset)
+	}
 	if cfg.Lang != "" {
 		setOptions(opts, map[string]string{"lang": cfg.Lang})
 	}
@@ -143,7 +147,7 @@ func Prepare(cfg *Config, totalMemMB int, progress Progress) (*exec.Cmd, string,
 	}
 
 	os.RemoveAll(filepath.Join(BaseDir(), "cache", "cds")) // class archives of launcher 1.3 (slowed the start down)
-	args := jvmFlags(memory)
+	args := jvmFlags(memory, totalMemMB)
 	if authlib != "" {
 		args = append(args, "-javaagent:"+authlib+"=ely.by")
 	}
