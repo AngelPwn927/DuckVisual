@@ -1,0 +1,8 @@
+{
+  "token": "ВСТАВЬ_ТОКЕН_ОТ_BOTFATHER",
+  "channel": "@duckvisual",
+  "adminId": 0,
+  "amounts": [50, 100, 250],
+  "cover": "cover.png",
+  "contact": "t.me/duckvisual"
+}

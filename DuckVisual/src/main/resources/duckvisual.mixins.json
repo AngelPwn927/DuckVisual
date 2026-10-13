@@ -1,0 +1,39 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.duckvisual.mixin",
+  "plugin": "dev.duckvisual.mixin.DuckMixinPlugin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "GameRendererMixin",
+    "HeldItemRendererMixin",
+    "InGameHudMixin",
+    "InGameOverlayRendererMixin",
+    "LightmapTextureManagerMixin",
+    "LivingEntityMixin",
+    "OverlayTextureAccessor",
+    "WorldPropertiesMixin",
+    "BossBarHudMixin",
+    "MouseMixin",
+    "WorldColorMixin",
+    "ClientWorldMixin",
+    "EntityRenderDispatcherMixin",
+    "EntityMixin",
+    "CameraMixin",
+    "MinecraftClientMixin",
+    "EntityRendererMixin",
+    "ClientPlayNetworkHandlerMixin",
+    "PlayerListHudAccessor",
+    "PlayerListHudMixin",
+    "TitleScreenMixin",
+    "ChatHudMixin",
+    "ItemEntityRendererMixin",
+    "WorldRendererMixin",
+    "TextRendererMixin",
+    "PressableWidgetMixin",
+    "SliderWidgetMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

@@ -1,0 +1,452 @@
+<title>Duck Visual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Montserrat:wght@800&display=swap">
+<style>
+  /* Layout: centered single column; hero = headline + live ClickGUI mockup with floating HUD widgets; sections stack with soft amber glows */
+  :root {
+    --bg: #0e0e11;
+    --surface: #16161b;
+    --raise: #1d1d24;
+    --line: #26262f;
+    --fg: #f4f2ee;
+    --sub: #9b98a3;
+    --dim: #5e5c66;
+    --amber: #ffb52e;
+    --yolk: #ffd43b;
+    --beak: #ff8a1f;
+    --glow: rgba(255, 160, 40, .22);
+    --grad: linear-gradient(135deg, var(--yolk), var(--beak));
+    --font: "Onest", "Segoe UI", system-ui, sans-serif;
+    --logo: "Montserrat", "Segoe UI", system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before { animation: none !important; transition: none !important; } }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.6 var(--font); overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+  h1, h2, h3 { margin: 0; letter-spacing: -0.025em; text-wrap: balance; }
+  p { margin: 0; }
+  :focus-visible { outline: 2px solid var(--yolk); outline-offset: 3px; border-radius: 8px; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding-inline: 24px; }
+  @media (max-width: 520px) { .wrap { padding-inline: 16px; } }
+  .center { text-align: center; }
+  .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  section { position: relative; padding-block: 110px 0; }
+  @media (max-width: 640px) { section { padding-block: 76px 0; } }
+  .sh { max-width: 640px; margin: 0 auto 46px; text-align: center; }
+  .sh h2 { font-size: clamp(28px, 3.6vw, 40px); font-weight: 700; }
+  .sh p { color: var(--sub); margin-top: 14px; }
+
+  main, .final { overflow-x: clip; }
+  /* header */
+  header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 78%, transparent); backdrop-filter: blur(14px); }
+  header .wrap { display: flex; align-items: center; height: 68px; gap: 24px; }
+  .brand { display: flex; align-items: center; gap: 9px; font: 800 17px var(--logo); }
+  .brand svg { width: 28px; height: 28px; }
+  header nav { display: flex; gap: 26px; margin: 0 auto; }
+  header nav a { color: var(--sub); font-size: 14px; transition: color .15s; }
+  header nav a:hover { color: var(--fg); }
+  .pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 22px; border-radius: 999px; font-weight: 600; font-size: 14px; white-space: nowrap; transition: transform .15s, box-shadow .2s, background .2s; }
+  .pill.solid { background: var(--grad); color: #1e1405; box-shadow: 0 6px 28px rgba(255, 150, 30, .35); }
+  .pill.solid:hover { transform: translateY(-1px); box-shadow: 0 10px 36px rgba(255, 150, 30, .5); }
+  .pill.line { border: 1px solid var(--line); background: var(--surface); }
+  .pill.line:hover { background: var(--raise); }
+  .pill svg { width: 17px; height: 17px; flex: none; }
+  .pill.lg { padding: 14px 28px; font-size: 15.5px; }
+  @media (max-width: 820px) { header nav { display: none; } header .pill { margin-left: auto; } }
+
+  /* hero */
+  .hero { padding-block: 56px 0; text-align: center; position: relative; }
+  .hero h1 { font-size: clamp(34px, 5vw, 56px); font-weight: 700; line-height: 1.1; }
+  .hero .lead { color: var(--sub); max-width: 600px; margin: 18px auto 0; font-size: 15.5px; }
+  .hero .cta { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .stage { position: relative; margin: 72px auto 0; max-width: 860px; }
+  .stage::before { content: ""; position: absolute; inset: -35% -30% -25%; background: radial-gradient(ellipse 50% 45% at 50% 50%, var(--glow), transparent 100%); pointer-events: none; z-index: 0; }
+
+  /* ClickGUI mockup, modelled on Duck Visual's own menu */
+  .gui { position: relative; z-index: 1; display: grid; grid-template-columns: 196px minmax(0, 1fr); text-align: left; border-radius: 18px; overflow: hidden;
+         background: #121217; border: 1px solid var(--line); box-shadow: 0 40px 120px rgba(0, 0, 0, .6); min-height: 400px; }
+  .gside { background: rgba(255, 255, 255, .02); border-right: 1px solid var(--line); padding: 18px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .gside .glogo { display: flex; align-items: center; gap: 8px; padding: 2px 8px 16px; font: 800 14px var(--logo); }
+  .gside .glogo svg { width: 22px; height: 22px; }
+  .gside .glogo small { display: block; font: 500 10px var(--font); color: var(--dim); }
+  .tab { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; color: var(--sub); font-size: 13px; text-align: left; width: 100%; transition: background .15s, color .15s; }
+  .tab:hover { color: var(--fg); background: rgba(255, 255, 255, .03); }
+  .tab.on { color: var(--fg); background: rgba(255, 181, 46, .12); box-shadow: inset 2px 0 0 var(--amber); }
+  .tab i { width: 18px; height: 18px; border-radius: 6px; background: var(--raise); display: grid; place-items: center; font-style: normal; font-size: 10px; color: var(--amber); }
+  .tab.on i { background: var(--grad); color: #1e1405; }
+  .tab span { margin-left: auto; font-size: 11px; color: var(--dim); }
+  .gside .sep { height: 1px; background: var(--line); margin: 10px 4px; }
+  .gmain { padding: 18px 20px 22px; min-width: 0; }
+  .gtop { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .gtop b { font-size: 15px; }
+  .search { margin-left: auto; display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 7px 12px; color: var(--dim); font-size: 12.5px; width: 200px; max-width: 45%; }
+  .search svg { width: 13px; height: 13px; flex: none; }
+  .mods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .mod { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--surface); border: 1px solid transparent; text-align: left; width: 100%; transition: border-color .2s, background .2s; }
+  .mod:hover { border-color: var(--line); }
+  .mod .t { min-width: 0; flex: 1; }
+  .mod b { display: block; font-weight: 500; font-size: 13.5px; color: var(--sub); transition: color .2s; }
+  .mod small { display: block; color: var(--dim); font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mod.on { background: rgba(255, 181, 46, .06); }
+  .mod.on b { color: var(--fg); }
+  .sw { width: 34px; height: 19px; border-radius: 99px; background: #2b2b34; position: relative; flex: none; transition: background .2s; }
+  .sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 13px; height: 13px; border-radius: 50%; background: #74727c; transition: left .2s, background .2s; }
+  .mod.on .sw { background: var(--grad); }
+  .mod.on .sw::after { left: 18px; background: #fff; }
+  @media (max-width: 760px) { .gui { grid-template-columns: minmax(0, 1fr); } .gside { flex-direction: row; overflow-x: auto; padding: 10px; } .gside .glogo, .gside .sep, .gside .x { display: none; } .tab { width: auto; flex: none; } .tab span { display: none; } }
+  @media (max-width: 520px) { .mods { grid-template-columns: minmax(0, 1fr); } .search { display: none; } }
+
+  /* floating HUD widgets */
+  .w { position: absolute; z-index: 2; background: rgba(20, 20, 26, .9); border: 1px solid var(--line); border-radius: 14px; backdrop-filter: blur(10px);
+       box-shadow: 0 18px 50px rgba(0, 0, 0, .5); text-align: left; font-size: 12px; animation: bob 6s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(-8px); } }
+  .w.music { top: -54px; left: -210px; width: 236px; padding: 12px; animation-delay: -1s; }
+  .w.music .row { display: flex; gap: 10px; align-items: center; }
+  .cover { width: 42px; height: 42px; border-radius: 9px; background: conic-gradient(from 200deg, #ffd43b, #ff8a1f, #b8326a, #3b2a7a, #ffd43b); flex: none; }
+  .w.music b { display: block; font-size: 13px; }
+  .w.music small { color: var(--sub); }
+  .prog { height: 3px; border-radius: 9px; background: #2b2b34; margin: 10px 0 4px; overflow: hidden; }
+  .prog i { display: block; height: 100%; width: 42%; background: var(--grad); animation: prog 30s linear infinite; }
+  @keyframes prog { from { width: 18%; } to { width: 96%; } }
+  .times { display: flex; justify-content: space-between; color: var(--dim); font-size: 10.5px; }
+  .ctrl { display: flex; justify-content: center; gap: 18px; margin-top: 6px; color: var(--fg); }
+  .ctrl svg { width: 14px; height: 14px; }
+  .eq { display: flex; gap: 2px; align-items: flex-end; height: 14px; margin-left: auto; }
+  .eq i { width: 3px; background: var(--amber); border-radius: 2px; animation: eq 1s ease-in-out infinite; }
+  .eq i:nth-child(2) { animation-delay: -.3s; } .eq i:nth-child(3) { animation-delay: -.6s; } .eq i:nth-child(4) { animation-delay: -.15s; }
+  @keyframes eq { 0%, 100% { height: 4px; } 50% { height: 14px; } }
+  .w.cd { top: -40px; right: -170px; width: 190px; padding: 10px 12px; animation-delay: -3s; }
+  .w.cd .h, .w.keys .h { display: flex; align-items: center; gap: 7px; font-weight: 600; margin-bottom: 6px; }
+  .w.cd .h i, .w.keys .h i { width: 8px; height: 8px; border-radius: 2px; background: var(--amber); }
+  .kv { display: flex; justify-content: space-between; color: var(--sub); padding: 2px 0; font-variant-numeric: tabular-nums; }
+  .kv b { color: var(--fg); font-weight: 500; }
+  .w.target { top: 58%; left: -200px; width: 210px; padding: 12px; display: flex; gap: 10px; align-items: center; animation-delay: -2s; }
+  .head { width: 38px; height: 38px; border-radius: 8px; flex: none; image-rendering: pixelated;
+          background: linear-gradient(#2e7d32 0 0) 0 0 / 100% 40% no-repeat, linear-gradient(90deg, #43a047 0 25%, #000 25% 37%, #43a047 37% 63%, #000 63% 75%, #43a047 75%) 0 40% / 100% 25% no-repeat, #388e3c; }
+  .w.target .t { flex: 1; min-width: 0; }
+  .w.target b { display: block; font-size: 13px; }
+  .hp { height: 5px; border-radius: 9px; background: #2b2b34; margin-top: 6px; overflow: hidden; }
+  .hp i { display: block; height: 100%; width: 64%; background: var(--grad); animation: hp 4s ease-in-out infinite; }
+  @keyframes hp { 0%, 100% { width: 72%; } 40% { width: 38%; } }
+  .w.keys { bottom: -34px; right: -150px; width: 176px; padding: 10px 12px; animation-delay: -4s; }
+  .kv kbd { font: 500 11px var(--font); background: var(--raise); border-radius: 5px; padding: 0 6px; color: var(--sub); }
+  @media (max-width: 1240px) { .w.music { left: -40px; top: -96px; } .w.cd { right: -24px; top: -70px; } .w.target { left: -40px; top: auto; bottom: -46px; } .w.keys { right: -24px; bottom: -46px; } }
+  @media (max-width: 760px) { .w { display: none; } }
+
+  /* advantages */
+  .adv { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 860px) { .adv { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .adv { grid-template-columns: minmax(0, 1fr); } }
+  .card { position: relative; border-radius: 20px; background: var(--surface); padding: 24px 24px 0; overflow: hidden; min-height: 300px; display: flex; flex-direction: column; min-width: 0; border: 1px solid transparent; transition: border-color .2s; }
+  .card:hover { border-color: var(--line); }
+  .card h3 { font-size: 16.5px; font-weight: 600; }
+  .card p { color: var(--sub); font-size: 13.5px; margin-top: 8px; max-width: 30ch; }
+  .card canvas { margin: auto auto -6px; width: 168px; height: 168px; image-rendering: pixelated; filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .6)); transition: transform .4s ease; }
+  .card:hover canvas { transform: translateY(-6px) rotate(-4deg); }
+  .card::after { content: ""; position: absolute; left: 50%; bottom: -60px; width: 220px; height: 160px; transform: translateX(-50%); background: radial-gradient(ellipse, var(--glow), transparent 70%); pointer-events: none; }
+
+  /* before / after */
+  .cmp { position: relative; max-width: 1000px; margin: 0 auto; border-radius: 22px; overflow: hidden; aspect-ratio: 16 / 9; border: 1px solid var(--line);
+         box-shadow: 0 30px 100px rgba(0, 0, 0, .55), 0 0 120px rgba(255, 150, 30, .12); user-select: none; touch-action: pan-y; }
+  .cmp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .cmp .top { clip-path: inset(0 calc(100% - var(--x, 50%)) 0 0); }
+  .cmp .knob { position: absolute; top: 0; bottom: 0; left: var(--x, 50%); width: 2px; background: #fff; transform: translateX(-1px); pointer-events: none; }
+  .cmp .knob::after { content: "‹ ›"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border-radius: 50%;
+                      background: #fff; color: #111; display: grid; place-items: center; font-weight: 700; letter-spacing: 2px; box-shadow: 0 6px 20px rgba(0, 0, 0, .4); }
+  .cmp .lab { position: absolute; top: 14px; padding: 5px 12px; border-radius: 999px; background: rgba(14, 14, 17, .75); backdrop-filter: blur(6px); font-size: 12.5px; }
+  .cmp .lab.l { left: 14px; } .cmp .lab.r { right: 14px; }
+  .cmp input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+
+  /* plans */
+  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 860px) { .plans { grid-template-columns: minmax(0, 1fr); max-width: 440px; margin: 0 auto; } }
+  .plan { position: relative; border-radius: 22px; background: var(--surface); padding: 26px 24px 0; text-align: center; overflow: hidden; display: flex; flex-direction: column; min-width: 0; border: 1px solid transparent; }
+  .plan.best { border-color: rgba(255, 181, 46, .4); }
+  .plan .mini { display: inline-flex; align-items: center; gap: 6px; color: var(--dim); font: 800 11.5px var(--logo); justify-content: center; }
+  .plan .mini svg { width: 15px; height: 15px; }
+  .plan h3 { font-size: 26px; font-weight: 700; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .plan .badge { font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 99px; background: var(--grad); color: #1e1405; letter-spacing: .02em; }
+  .plan p { color: var(--sub); font-size: 13.5px; margin: 10px auto 0; max-width: 28ch; }
+  .plan .price { margin-top: 16px; font-weight: 700; font-size: 15px; }
+  .plan .price s { color: var(--dim); font-weight: 400; margin-right: 6px; }
+  .plan .pill { margin: 18px auto 0; }
+  .plan canvas { width: 150px; height: 150px; margin: 26px auto -10px; image-rendering: pixelated; filter: drop-shadow(0 20px 30px rgba(0, 0, 0, .6)); }
+  .plan::after { content: ""; position: absolute; left: 50%; bottom: -70px; width: 260px; height: 170px; transform: translateX(-50%); background: radial-gradient(ellipse, var(--glow), transparent 70%); pointer-events: none; }
+
+  /* launcher showcase */
+  .show { max-width: 920px; margin: 0 auto; border-radius: 20px; overflow: hidden; border: 1px solid var(--line); background: var(--surface); box-shadow: 0 30px 100px rgba(0, 0, 0, .55); }
+  .show .bar { display: flex; align-items: center; gap: 8px; height: 36px; padding-inline: 14px; border-bottom: 1px solid var(--line); color: var(--sub); font-size: 12px; }
+  .show .bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--raise); }
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 24px; }
+  .chip { padding: 6px 13px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--sub); font-size: 13px; }
+
+  /* stats */
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 56px; }
+  @media (max-width: 760px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .stat { background: var(--surface); border-radius: 16px; padding: 22px; text-align: center; }
+  .stat b { display: block; font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stat small { color: var(--dim); font-size: 13px; }
+
+  /* final + footer */
+  .final { margin-top: 110px; padding-block: 90px; text-align: center; background: radial-gradient(ellipse at 50% 100%, var(--glow), transparent 65%); }
+  .final h2 { font-size: clamp(30px, 4.4vw, 48px); font-weight: 700; line-height: 1.12; }
+  .final p { color: var(--sub); margin: 16px auto 0; max-width: 460px; }
+  .final .cta { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+  footer { border-top: 1px solid var(--line); padding-block: 44px 48px; color: var(--dim); font-size: 13px; }
+  footer .wrap { display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(2, minmax(0, 1fr)); gap: 32px; }
+  @media (max-width: 760px) { footer .wrap { grid-template-columns: minmax(0, 1fr); } }
+  footer h4 { margin: 0 0 12px; color: var(--fg); font-size: 14px; font-weight: 600; }
+  footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  footer a:hover { color: var(--fg); }
+  footer .brand { color: var(--fg); margin-bottom: 14px; }
+  footer p + p { margin-top: 8px; }
+</style>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="dg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd43b"/><stop offset="1" stop-color="#ff8a1f"/></linearGradient></defs><ellipse cx="29" cy="42" rx="22" ry="14" fill="url(#dg)"/><circle cx="40" cy="22" r="12" fill="#ffd43b"/><path d="M50 19 L62 23 L50 27 Z" fill="#ff8a1f"/><circle cx="43" cy="19" r="2.4" fill="#111"/></svg>
+      DuckVisual
+    </a>
+    <nav aria-label="Разделы"><a href="#top">Главная</a><a href="#features">Функции</a><a href="#get">Скачать</a><a href="#launcher">Лаунчер</a></nav>
+    <a class="pill solid" href="#get">Скачать</a>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <h1>Лучшие визуалы для<br><span class="grad">комфортной игры</span> в Minecraft</h1>
+      <p class="lead">Duck Visual создан для тех, кто ценит стиль и плавную картинку. 61 функция, своё меню и HUD, моды для FPS и лаунчер, который ставит всё сам.</p>
+      <div class="cta">
+        <a class="pill solid lg" href="{{EXE}}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.5 10.5 4.4v7.1H3zm0 13L10.5 19.6v-7H3zM11.5 4.3 21 3v8.5h-9.5zm0 15.4L21 21v-8.4h-9.5z"/></svg>Скачать лаунчер</a>
+        <a class="pill line lg" href="https://t.me/duckvisual" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.6 19.8c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.2-8.3c.4-.4-.1-.6-.6-.2L6 13.4l-4.9-1.5c-1.1-.3-1.1-1.1.2-1.6L20.5 2.9c.9-.3 1.7.2 1.4 1.4z"/></svg>Telegram</a>
+      </div>
+
+      <div class="stage">
+        <div class="w music" aria-hidden="true">
+          <div class="row"><div class="cover"></div><div><b>Night Drive</b><small>Spotify</small></div><div class="eq"><i></i><i></i><i></i><i></i></div></div>
+          <div class="prog"><i></i></div><div class="times"><span>1:24</span><span>3:12</span></div>
+          <div class="ctrl"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></div>
+        </div>
+        <div class="w cd" aria-hidden="true"><div class="h"><i></i>Cooldowns</div><div class="kv"><span>Эндер-жемчуг</span><b>3.2s</b></div><div class="kv"><span>Золотое яблоко</span><b>0.8s</b></div></div>
+        <div class="w target" aria-hidden="true"><div class="head"></div><div class="t"><b>Zombie</b><small style="color:var(--sub)">13 HP · 3.1 м</small><div class="hp"><i></i></div></div></div>
+        <div class="w keys" aria-hidden="true"><div class="h"><i></i>Keybinds</div><div class="kv"><span>Zoom</span><kbd>C</kbd></div><div class="kv"><span>Freelook</span><kbd>Alt</kbd></div><div class="kv"><span>TargetESP</span><kbd>R</kbd></div></div>
+
+        <div class="gui" role="group" aria-label="Пример меню Duck Visual: нажимай на функции">
+          <div class="gside">
+            <div class="glogo"><svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="29" cy="42" rx="22" ry="14" fill="#ffb52e"/><circle cx="40" cy="22" r="12" fill="#ffd43b"/><path d="M50 19 L62 23 L50 27 Z" fill="#ff8a1f"/><circle cx="43" cy="19" r="2.4" fill="#111"/></svg><div>Duck Visual<small>v1.0 · 1.21.4</small></div></div>
+            <button class="tab on" data-cat="visuals" type="button"><i>V</i>Visuals<span>34</span></button>
+            <button class="tab" data-cat="hud" type="button"><i>H</i>Hud<span>14</span></button>
+            <button class="tab" data-cat="world" type="button"><i>W</i>World<span>7</span></button>
+            <button class="tab" data-cat="misc" type="button"><i>M</i>Misc<span>6</span></button>
+            <div class="sep x"></div>
+            <button class="tab x" data-cat="palette" type="button"><i>P</i>Palette<span>26</span></button>
+          </div>
+          <div class="gmain">
+            <div class="gtop"><b id="gTitle">Visuals</b>
+              <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Поиск...</div></div>
+            <div class="mods" id="mods"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="sh">
+        <h2>Преимущества Duck Visual</h2>
+        <p>Красивая картинка, удобное меню и высокий FPS. Всё ставится одной кнопкой в лаунчере и настраивается под тебя.</p>
+      </div>
+      <div class="adv">
+        <div class="card"><h3>Дизайн</h3><p>Своё меню с блюром, 26 палитр, шрифт Montserrat и стиль на всём интерфейсе Minecraft.</p><canvas data-item="gem" width="16" height="16"></canvas></div>
+        <div class="card"><h3>Производительность</h3><p>17 модов оптимизации и профиль «Максимум FPS» для слабых компьютеров.</p><canvas data-item="pickaxe" width="16" height="16"></canvas></div>
+        <div class="card"><h3>PvP-визуалы</h3><p>TargetESP, траектории, индикатор крита, урон над мобами и TargetHud.</p><canvas data-item="sword" width="16" height="16"></canvas></div>
+        <div class="card"><h3>Гибкие настройки</h3><p>У каждой функции свои параметры, бинды на любую клавишу, конфиги и команды в чате.</p><canvas data-item="compass" width="16" height="16"></canvas></div>
+        <div class="card"><h3>Только визуал</h3><p>Мод меняет картинку у тебя на экране и ничего не отправляет на сервер.</p><canvas data-item="shield" width="16" height="16"></canvas></div>
+        <div class="card"><h3>Обновления сами</h3><p>Лаунчер ставит свежую версию мода и модов при каждом запуске.</p><canvas data-item="potion" width="16" height="16"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sh">
+        <h2>Сравни сам</h2>
+        <p>Слева обычный Minecraft, справа с Duck Visual. Потяни ползунок.</p>
+      </div>
+      <div class="cmp" id="cmp">
+        <img src="{{IMG:duck}}" alt="Главное меню с Duck Visual" width="1100" height="619">
+        <img class="top" src="{{IMG:vanilla}}" alt="Обычное главное меню Minecraft" width="1100" height="619">
+        <div class="knob"></div>
+        <span class="lab l">Обычный Minecraft</span><span class="lab r">Duck Visual</span>
+        <input type="range" id="cmpRange" min="0" max="100" value="50" aria-label="Сравнение: обычный Minecraft и Duck Visual">
+      </div>
+    </div>
+  </section>
+
+  <section id="get">
+    <div class="wrap">
+      <div class="sh">
+        <h2>Выбери, как играть</h2>
+        <p>Всё бесплатно. Проще всего через лаунчер: он сам поставит Java, Minecraft, Fabric и мод.</p>
+      </div>
+      <div class="plans">
+        <div class="plan best">
+          <div class="mini"><svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="29" cy="42" rx="22" ry="14" fill="currentColor"/><circle cx="40" cy="22" r="12" fill="currentColor"/></svg>DuckVisual</div>
+          <h3>Лаунчер <span class="badge">ЛУЧШЕ</span></h3>
+          <p>Скачал, ввёл ник, нажал «Играть». Duck Visual и моды для FPS уже внутри.</p>
+          <div class="price">Бесплатно</div>
+          <a class="pill solid" href="{{EXE}}" target="_blank" rel="noopener">Скачать .exe</a>
+          <canvas data-item="duck" width="16" height="16"></canvas>
+        </div>
+        <div class="plan">
+          <div class="mini"><svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="29" cy="42" rx="22" ry="14" fill="currentColor"/><circle cx="40" cy="22" r="12" fill="currentColor"/></svg>DuckVisual</div>
+          <h3>Только мод</h3>
+          <p>Файл .jar для своего лаунчера. Нужны Fabric 1.21.4 и Fabric API.</p>
+          <div class="price">Бесплатно</div>
+          <a class="pill line" href="{{JAR}}" target="_blank" rel="noopener">Скачать .jar</a>
+          <canvas data-item="book" width="16" height="16"></canvas>
+        </div>
+        <div class="plan">
+          <div class="mini"><svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="29" cy="42" rx="22" ry="14" fill="currentColor"/><circle cx="40" cy="22" r="12" fill="currentColor"/></svg>DuckVisual</div>
+          <h3>Исходный код</h3>
+          <p>Весь код мода, лаунчера и этого сайта открыт на GitHub.</p>
+          <div class="price">Бесплатно</div>
+          <a class="pill line" href="https://github.com/dima6546446-boop/Xd" target="_blank" rel="noopener">Открыть GitHub</a>
+          <canvas data-item="chest" width="16" height="16"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="launcher">
+    <div class="wrap">
+      <div class="sh">
+        <h2>Узнайте больше о Duck Launcher</h2>
+        <p>Любая версия от 1.8.9, каталог модов Modrinth и CurseForge, вход без лицензии или через Ely.by и свой сервер в мультиплеере.</p>
+      </div>
+      <div class="show">
+        <div class="bar"><i></i><i></i><i></i><span style="margin-left:6px">Duck Launcher 1.3</span></div>
+        <img src="{{IMG:launcher}}" alt="Окно Duck Launcher" width="1000" height="553" loading="lazy">
+      </div>
+      <div class="chips"><span class="chip">Fabric и Vanilla</span><span class="chip">Java ставится сама</span><span class="chip">Профиль «Максимум FPS»</span><span class="chip">Duck Server · n1.pg19.su:25795</span></div>
+      <div class="stats">
+        <div class="stat"><b class="grad">61</b><small>функция</small></div>
+        <div class="stat"><b>17</b><small>модов для FPS</small></div>
+        <div class="stat"><b>26</b><small>палитр</small></div>
+        <div class="stat"><b>0 ₽</b><small>навсегда</small></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="final">
+    <div class="wrap">
+      <h2>Твой новый Minecraft<br>начинается <span class="grad">здесь</span></h2>
+      <p>Скачай лаунчер и зайди в игру с Duck Visual за пару минут.</p>
+      <div class="cta">
+        <a class="pill solid lg" href="{{EXE}}" target="_blank" rel="noopener">Скачать лаунчер</a>
+        <a class="pill line lg" href="https://t.me/duckvisual" target="_blank" rel="noopener">Канал в Telegram</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="brand"><svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="29" cy="42" rx="22" ry="14" fill="url(#dg)"/><circle cx="40" cy="22" r="12" fill="#ffd43b"/><path d="M50 19 L62 23 L50 27 Z" fill="#ff8a1f"/><circle cx="43" cy="19" r="2.4" fill="#111"/></svg>DuckVisual</div>
+      <p>Duck Visual и Duck Launcher не являются продуктами Mojang AB и не связаны с Mojang AB или Microsoft.</p>
+      <p>Minecraft — товарный знак Mojang AB. Игровые файлы загружаются с официальных серверов Mojang.</p>
+    </div>
+    <div><h4>Навигация</h4><ul><li><a href="#top">Главная</a></li><li><a href="#features">Функции</a></li><li><a href="#get">Скачать</a></li><li><a href="#launcher">Лаунчер</a></li></ul></div>
+    <div><h4>Связь</h4><ul><li><a href="https://t.me/duckvisual" target="_blank" rel="noopener">Канал @DuckVisual</a></li><li><a href="https://github.com/dima6546446-boop/Xd" target="_blank" rel="noopener">GitHub</a></li></ul></div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  /* ---------- ClickGUI mockup: real Duck Visual modules ---------- */
+  var cats = {
+    visuals: [['ChinaHat', 'Конус-шляпа над головой', 1], ['TargetESP', 'Подсветка цели при ударе', 1], ['JumpCircles', 'Круги при прыжке', 1], ['Trajectories', 'Куда прилетит снаряд', 0],
+              ['HitParticles', 'Частицы при ударе', 1], ['Nametags', 'HP, броня и пинг над игроком', 0], ['Freelook', 'Камера вокруг себя на Alt', 0], ['CustomModels', 'Утка вместо скина', 1]],
+    hud: [['Watermark', 'Лого, FPS, пинг, время', 1], ['TargetHud', 'Информация о цели', 1], ['Music', 'Что играет в браузере', 1], ['Cooldowns', 'Кулдауны предметов', 1],
+          ['ArmorHud', 'Прочность брони', 0], ['Keybinds', 'Список биндов', 1], ['TabList', 'Новый Tab с головами', 0], ['CustomHotbar', 'Хотбар с биндами слотов', 0]],
+    world: [['CustomSky', 'Звёзды и северное сияние', 1], ['WorldColor', 'Небо и туман в цвет темы', 0], ['WorldParticles', 'Светлячки, снег, сакура', 1], ['TimeChanger', 'Время суток на клиенте', 0],
+            ['Fullbright', 'Полная яркость', 0], ['BreakEffects', 'Вспышка при ломании блока', 1]],
+    misc: [['Theme', 'Gradient, Static, Rainbow', 1], ['ClickGui', 'Блюр и затемнение фона', 1], ['CustomFont', 'Плавный шрифт', 1], ['MinecraftUI', 'Стиль Duck во всём меню', 1],
+           ['MainMenu', 'Анимированное меню', 1], ['ChatTweaks', 'Время и склейка сообщений', 0]],
+    palette: [['Duck', 'Жёлтый → оранжевый', 1], ['Sunset', 'Розовый → оранжевый', 0], ['Ocean', 'Голубой → синий', 0], ['Purple', 'Фиолетовый', 0],
+              ['Mint', 'Мятный', 0], ['Cherry', 'Вишнёвый', 0], ['Neon', 'Неоновый', 0], ['Gold', 'Золотой', 0]]
+  };
+  var names = { visuals: 'Visuals', hud: 'Hud', world: 'World', misc: 'Misc', palette: 'Palette' };
+  var box = document.getElementById('mods');
+  function render(cat) {
+    box.innerHTML = '';
+    document.getElementById('gTitle').textContent = names[cat];
+    cats[cat].forEach(function (m) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'mod' + (m[2] ? ' on' : '');
+      b.setAttribute('aria-pressed', m[2] ? 'true' : 'false');
+      b.innerHTML = '<div class="t"><b></b><small></small></div><div class="sw"></div>';
+      b.querySelector('b').textContent = m[0];
+      b.querySelector('small').textContent = m[1];
+      b.addEventListener('click', function () {
+        if (cat === 'palette') { cats.palette.forEach(function (p) { p[2] = 0; }); m[2] = 1; render(cat); return; }
+        m[2] = m[2] ? 0 : 1; b.classList.toggle('on', !!m[2]); b.setAttribute('aria-pressed', m[2] ? 'true' : 'false');
+      });
+      box.appendChild(b);
+    });
+  }
+  document.querySelectorAll('.tab').forEach(function (t) {
+    t.addEventListener('click', function () {
+      document.querySelectorAll('.tab').forEach(function (x) { x.classList.toggle('on', x === t); });
+      render(t.dataset.cat);
+    });
+  });
+  render('visuals');
+
+  /* ---------- before / after ---------- */
+  var cmp = document.getElementById('cmp'), range = document.getElementById('cmpRange');
+  range.addEventListener('input', function () { cmp.style.setProperty('--x', range.value + '%'); });
+
+  /* ---------- pixel items (drawn here, 16x16) ---------- */
+  var P = { k: '#1a1a1f', d: '#4a4a52', m: '#8a8a94', l: '#c9c9d1', w: '#f4f4f8', y: '#ffd43b', o: '#ff8a1f', b: '#6b4a2b', n: '#3a2a1a', a: '#ffb52e', e: '#7a5a3a', g: '#9fe2ff', c: '#59b8e0' };
+  var items = {
+    sword: ['..............kk', '.............kwk', '............kwlk', '...........kwlk.', '..........kwlk..', '.........kwlk...', '........kwlk....', '.......kwlk.....',
+            '..kk..kwlk......', '..kmkkwlk.......', '...kmmlk........', '....kmk.........', '...kbkmk........', '..kbk.kmk.......', '.kbk...kk.......', '.kk.............'],
+    pickaxe: ['.....kkkkkk.....', '...kkmlllllmkk..', '..kml.kkkkk.lmk.', '.kmk.......kblk.', '.kk.......kbk.kk', '.........kbk....', '........kbk.....', '.......kbk......',
+              '......kbk.......', '.....kbk........', '....kbk.........', '...kbk..........', '..kbk...........', '.kbk............', '.kk.............', '................'],
+    gem: ['................', '.....kkkkkk.....', '....kwwllmmk....', '...kwwlllmmmk...', '..kkkkkkkkkkkk..', '..kwlllmmmmddk..', '...kwlllmmddk...', '....kwllmmdk....',
+          '.....kwlmmdk....', '......kwmdk.....', '.......kdk......', '........k.......', '................', '................', '................', '................'],
+    compass: ['................', '.....kkkkkk.....', '....kmmmmmmk....', '...kmllllllmk...', '..kmlllollllmk..', '..kmllloolllmk..', '..kmlllooollmk..', '..kmllldkllllmk.',
+              '..kmlllddlllmk..', '..kmllldlllmk...', '...kmllllllmk...', '....kmmmmmmk....', '.....kkkkkk.....', '................', '................', '................'],
+    shield: ['................', '..kkkkkkkkkkkk..', '..kmmmmyymmmmk..', '..kmllllyllllmk.', '..kmlllyyylllmk.', '..kmlyyyyyyylmk.', '..kmlllyyylllmk.', '..kmllllylllmk..',
+             '...kmlllylllmk..', '...kmlllllllmk..', '....kmllllmk....', '.....kmllmk.....', '......kmmk......', '.......kk.......', '................', '................'],
+    potion: ['................', '......kkkk......', '......kbbk......', '.......kk.......', '......kwlk......', '......kwlk......', '.....kwllmk.....', '....kwlllllk....',
+             '...kwaaaaaaak...', '...kwayyaaaok...', '...kayyaaaaok...', '...kaaaaaaook...', '....kaaaaook....', '.....kkkkkk.....', '................', '................'],
+    duck: ['................', '.........kkkk...', '........kyyyyk..', '.......kyykyyk..', '.......kyyyyykoo', '.......kyyyyykoo', '..kk....kyyyk...', '.kyykkkkkyyyyk..',
+           '.kyyyyyyyyyyyk..', '.kyyyaaaaayyyk..', '.kyyaaaaaayyk...', '..kyyaaaayyk....', '...kkyyyyykk....', '.....kkkkk......', '......o..o......', '.....oo.oo......'],
+    book: ['................', '..kkkkkkkkkkk...', '..keeeeeeeeeek..', '..keyyyyyyyyek..', '..keyaaaaaayek..', '..keyyyyyyyyek..', '..keeeeeeeeeek..', '..keeeeeeeeeek..',
+           '..keeeeeeeeeek..', '..keeeeeeeeeek..', '..kwwwwwwwwwwk..', '..klllllllllkk..', '..kkkkkkkkkkk...', '................', '................', '................'],
+    chest: ['................', '..kkkkkkkkkkkk..', '..keeeeeeeeeek..', '..kbbbbbbbbbbk..', '..keeeeeeeeeek..', '..kkkkkyykkkkk..', '..keeeeyyeeeek..', '..kbbbbbbbbbbk..',
+            '..keeeeeeeeeek..', '..kbbbbbbbbbbk..', '..keeeeeeeeeek..', '..kkkkkkkkkkkk..', '................', '................', '................', '................']
+  };
+  document.querySelectorAll('canvas[data-item]').forEach(function (cv) {
+    var map = items[cv.dataset.item]; if (!map) return;
+    var ctx = cv.getContext('2d');
+    map.forEach(function (row, y) {
+      for (var x = 0; x < row.length; x++) { var c = P[row[x]]; if (c) { ctx.fillStyle = c; ctx.fillRect(x, y, 1, 1); } }
+    });
+  });
+})();
+</script>

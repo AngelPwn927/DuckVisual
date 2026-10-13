@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "duckvisual",
+  "version": "${version}",
+  "name": "Duck Visual",
+  "description": "Client-side visuals mod: HUD, ClickGUI, China Hat, Jump Circles, Trails, Target ESP, Hit Particles, Custom Crosshair and more.",
+  "authors": ["Duck Visual"],
+  "license": "MIT",
+  "icon": "assets/duckvisual/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["dev.duckvisual.DuckVisual"]
+  },
+  "mixins": ["duckvisual.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.4",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

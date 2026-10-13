@@ -1,0 +1,15 @@
+# systemd unit for a Linux VPS: copy to /etc/systemd/system/duckbot.service
+[Unit]
+Description=Duck Visual Stars donation bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=/opt/duckbot
+ExecStart=/opt/duckbot/duckbot-linux
+Restart=always
+RestartSec=5
+User=duckbot
+
+[Install]
+WantedBy=multi-user.target

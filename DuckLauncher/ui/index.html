@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Duck Launcher</title>
+<style>
+  :root {
+    --bg: #0c0c11; --panel: #13131a; --card: #191921; --card2: #20202a; --line: #262631;
+    --text: #f2f2f6; --sub: #8d8d9b; --accent1: #ffd43b; --accent2: #ff8a1f; --danger: #ff5566; --ok: #55e08a; --tg: #2aabee;
+    --grad: linear-gradient(135deg, var(--accent1), var(--accent2));
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body { background: var(--bg); color: var(--text); font: 14px "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+         display: flex; user-select: none; -webkit-user-select: none; }
+  button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+  input, select { font: inherit; color: var(--text); }
+
+  /* intro: typed disclaimer */
+  #intro { position: fixed; inset: 0; z-index: 50; background: radial-gradient(circle at 50% 45%, #1b1408 0%, #07070a 60%);
+           display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
+           transition: opacity .7s ease, visibility .7s; }
+  #intro.hide { opacity: 0; visibility: hidden; }
+  #intro svg { width: 92px; height: 92px; filter: drop-shadow(0 0 30px rgba(255,160,40,.45)); animation: pop .8s cubic-bezier(.2,1.4,.4,1) both; }
+  @keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+  #typed { font-size: 22px; font-weight: 800; letter-spacing: 3px; min-height: 30px; text-align: center;
+           background: var(--grad); -webkit-background-clip: text; color: transparent; }
+  #typed::after { content: "▍"; color: var(--accent1); -webkit-text-fill-color: var(--accent1); animation: blink .8s steps(1) infinite; margin-left: 2px; }
+  @keyframes blink { 50% { opacity: 0; } }
+  #intro small { color: #5d5d6a; letter-spacing: 1px; font-size: 11px; opacity: 0; transition: opacity .6s; }
+  #intro small.on { opacity: 1; }
+
+  /* sidebar */
+  .side { width: 232px; background: var(--panel); border-right: 1px solid var(--line); display: flex; flex-direction: column; padding: 22px 14px 14px; }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 0 8px 22px; }
+  .brand b { font-size: 18px; } .brand b span { background: var(--grad); -webkit-background-clip: text; color: transparent; }
+  .brand small { display: block; color: var(--sub); font-size: 11px; margin-top: 1px; }
+  .nav button { width: 100%; display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 10px; color: var(--sub);
+                transition: background .15s, color .15s; margin-bottom: 4px; text-align: left; }
+  .nav button:hover { background: var(--card); color: var(--text); }
+  .nav button.on { background: rgba(255, 170, 40, .12); color: var(--text); box-shadow: inset 3px 0 0 var(--accent2); }
+  .nav svg { width: 18px; height: 18px; flex: none; }
+  .spacer { flex: 1; }
+  .account { background: var(--card); border-radius: 12px; padding: 10px; display: flex; align-items: center; gap: 10px; }
+  .head { width: 36px; height: 36px; border-radius: 8px; background-color: var(--card2); image-rendering: pixelated; flex: none;
+          display: grid; place-items: center; font-weight: 700; background-size: 288px 288px; background-position: -36px -36px; }
+  .account .who { flex: 1; min-width: 0; } .account .who b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .account .who small { color: var(--sub); font-size: 11px; }
+  .icon-btn { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; color: var(--sub); }
+  .icon-btn:hover { background: var(--card2); color: var(--text); }
+  .legal { color: #55555f; font-size: 10px; line-height: 1.45; margin-top: 10px; padding: 0 4px; }
+
+  /* main */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .page { display: none; flex: 1; flex-direction: column; padding: 22px; min-height: 0; animation: fade .25s ease; }
+  .page.on { display: flex; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .hero { position: relative; flex: 1; border-radius: 18px; overflow: hidden; background: #111 center/cover no-repeat; min-height: 0; }
+  .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(12,12,17,.05) 30%, rgba(12,12,17,.93) 100%); }
+  .hero .info { position: absolute; left: 28px; right: 28px; bottom: 22px; z-index: 1; }
+  .hero h1 { font-size: 38px; font-weight: 800; letter-spacing: -.5px; } .hero h1 span { background: var(--grad); -webkit-background-clip: text; color: transparent; }
+  .hero p { color: #c9c9d3; margin-top: 6px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.08); padding: 5px 11px; border-radius: 999px; font-size: 12px; color: #e6e6ee; }
+
+  .bar { display: flex; align-items: center; gap: 14px; margin-top: 16px; }
+  .status { flex: 1; min-width: 0; }
+  .status .t { display: flex; justify-content: space-between; color: var(--sub); font-size: 12px; margin-bottom: 8px; gap: 10px; }
+  .status .t b { color: var(--text); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .track { height: 6px; background: var(--card2); border-radius: 99px; overflow: hidden; }
+  .fill { height: 100%; width: 0; background: var(--grad); border-radius: 99px; transition: width .2s; }
+  .play { width: 210px; height: 62px; border-radius: 16px; background: var(--grad); color: #1a1205; font-size: 20px; font-weight: 800;
+          letter-spacing: .5px; box-shadow: 0 10px 40px rgba(255, 150, 30, .35); transition: transform .12s, box-shadow .2s, filter .2s; flex: none; }
+  .play:hover { transform: translateY(-2px); box-shadow: 0 14px 50px rgba(255, 150, 30, .5); }
+  .play:active { transform: translateY(0) scale(.98); }
+  .play:disabled { filter: grayscale(.7) brightness(.7); cursor: default; transform: none; box-shadow: none; }
+
+  /* version picker */
+  .picker { position: relative; flex: none; }
+  .vbtn { height: 62px; min-width: 170px; background: var(--card); border-radius: 14px; padding: 0 14px; display: flex; flex-direction: column;
+          justify-content: center; align-items: flex-start; gap: 2px; text-align: left; border: 1px solid var(--line); }
+  .vbtn:hover { background: var(--card2); }
+  .vbtn small { color: var(--sub); font-size: 11px; } .vbtn b { font-size: 15px; display: flex; align-items: center; gap: 6px; }
+  .badge { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 6px; background: var(--grad); color: #1a1205; }
+  .badge.gray { background: var(--card2); color: var(--sub); }
+  .menu { position: absolute; bottom: 70px; left: 0; width: 290px; max-height: 360px; background: var(--panel); border: 1px solid var(--line);
+          border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,.6); display: none; flex-direction: column; overflow: hidden; z-index: 5; }
+  .menu.on { display: flex; animation: fade .15s; }
+  .loaders { display: flex; gap: 6px; padding: 10px; border-bottom: 1px solid var(--line); }
+  .loaders button { flex: 1; padding: 8px; border-radius: 9px; background: var(--card); color: var(--sub); }
+  .loaders button.on { background: var(--grad); color: #1a1205; font-weight: 700; }
+  .loaders button:disabled { opacity: .35; cursor: default; }
+  .vlist { overflow-y: auto; padding: 6px; }
+  .vlist button { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 9px 10px; border-radius: 8px; text-align: left; }
+  .vlist button:hover { background: var(--card); } .vlist button.on { background: rgba(255,170,40,.12); }
+  .vlist .muted { color: var(--sub); font-size: 11px; }
+
+  /* settings */
+  h2 { font-size: 22px; margin-bottom: 14px; }
+  .sec { color: var(--sub); font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; margin: 6px 4px 8px; }
+  .card { background: var(--card); border-radius: 14px; padding: 14px 18px; margin-bottom: 12px; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .row + .row { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .row.grp { padding-top: 14px; } .row.grp + .row { border-top: 0; padding-top: 0; margin-top: 8px; }
+  .row small { display: block; color: var(--sub); font-size: 12px; margin-top: 2px; }
+  .switch { width: 42px; height: 24px; border-radius: 99px; background: var(--card2); position: relative; transition: background .2s; flex: none; }
+  .switch::after { content: ""; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: #9a9aa8; transition: left .2s, background .2s; }
+  .switch.on { background: var(--grad); } .switch.on::after { left: 21px; background: #fff; }
+  input[type=range] { -webkit-appearance: none; width: 220px; height: 6px; border-radius: 99px; background: var(--card2); outline: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent1); box-shadow: 0 0 0 4px rgba(255,212,59,.2); cursor: pointer; }
+  .field { width: 100%; background: var(--card2); border: 1px solid transparent; border-radius: 10px; padding: 10px 12px; outline: none; transition: border .15s; }
+  .field:focus { border-color: var(--accent2); }
+  .small-field { width: 80px; text-align: center; }
+  select.field { width: 190px; cursor: pointer; }
+  .seg { display: flex; background: var(--card2); border-radius: 10px; padding: 3px; }
+  .seg button { padding: 7px 12px; border-radius: 8px; color: var(--sub); font-size: 13px; }
+  .seg button.on { background: var(--grad); color: #1a1205; font-weight: 700; }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn { background: var(--card2); padding: 9px 14px; border-radius: 10px; color: var(--text); }
+  .btn:hover { background: #2a2a36; }
+  .btn.primary { background: var(--grad); color: #1a1205; font-weight: 700; }
+  .scroll { overflow-y: auto; padding-right: 6px; min-height: 0; }
+  .scroll::-webkit-scrollbar { width: 6px; } .scroll::-webkit-scrollbar-thumb { background: #33333f; border-radius: 9px; }
+
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .feat { background: var(--card); border-radius: 14px; padding: 14px 16px; }
+  .feat b { display: block; margin-bottom: 6px; } .feat b i { font-style: normal; background: var(--grad); -webkit-background-clip: text; color: transparent; }
+  .feat p { color: var(--sub); font-size: 13px; line-height: 1.5; }
+
+
+  /* mods */
+  .tools { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+  .tools .field { flex: 1; }
+  .tools select.field { width: 200px; flex: none; }
+  .btn { white-space: nowrap; }
+  .mod { display: flex; gap: 14px; align-items: center; background: var(--card); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; }
+  .mod img, .mod .noimg { width: 52px; height: 52px; border-radius: 12px; flex: none; background: var(--card2); object-fit: cover; }
+  .mod .txt { flex: 1; min-width: 0; }
+  .mod .txt b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mod .txt b a { color: var(--sub); font-weight: 400; font-size: 12px; margin-left: 6px; cursor: pointer; }
+  .mod .txt b a:hover { color: var(--accent1); }
+  .mod .txt p { color: var(--sub); font-size: 12px; margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .mod .meta { color: #6d6d7a; font-size: 11px; margin-top: 4px; }
+  .mod .act { flex: none; min-width: 120px; }
+  .btn.done { background: rgba(85,224,138,.12); color: var(--ok); }
+  .btn.done:hover { background: rgba(255,85,102,.14); color: var(--danger); }
+  .btn:disabled { opacity: .55; cursor: default; }
+  .empty { color: var(--sub); text-align: center; padding: 40px 10px; line-height: 1.6; }
+  .empty .btn { margin-top: 12px; }
+  .cnt { background: var(--card2); color: var(--sub); border-radius: 99px; padding: 1px 7px; font-size: 11px; margin-left: 4px; }
+  .seg button.on .cnt { background: rgba(0,0,0,.15); color: #1a1205; }
+
+  /* servers */
+  .srv { display: flex; gap: 18px; align-items: center; background: var(--card); border-radius: 18px; padding: 18px; margin-bottom: 12px;
+         border: 1px solid var(--line); background-image: radial-gradient(circle at 0% 0%, rgba(255,170,40,.10), transparent 55%); }
+  .srv .ic { width: 72px; height: 72px; border-radius: 14px; background: var(--card2); image-rendering: pixelated; flex: none; display: grid; place-items: center; }
+  .srv .ic img { width: 72px; height: 72px; border-radius: 14px; image-rendering: pixelated; }
+  .srv .txt { flex: 1; min-width: 0; }
+  .srv .txt b { font-size: 18px; }
+  .srv .addr { color: var(--sub); font-size: 12px; margin-top: 2px; cursor: pointer; } .srv .addr:hover { color: var(--accent1); }
+  .motd { font-family: Consolas, "Cascadia Mono", monospace; font-size: 13px; margin-top: 8px; white-space: pre-wrap; line-height: 1.4; color: #aaa; }
+  .srv .stat { display: flex; gap: 14px; margin-top: 8px; font-size: 12px; color: var(--sub); }
+  .srv .st { display: inline-flex; align-items: center; }
+  .dot { display: inline-block; flex: none; width: 8px; height: 8px; border-radius: 50%; background: #555; margin-right: 6px; }
+  .dot.on { background: var(--ok); box-shadow: 0 0 10px var(--ok); }
+  .srv .play { width: 190px; height: 54px; font-size: 16px; }
+
+  /* creator */
+  .creator { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px; }
+  .avatar { width: 120px; height: 120px; border-radius: 32px; background: var(--card); display: grid; place-items: center;
+            box-shadow: 0 0 0 1px var(--line), 0 20px 70px rgba(255,150,30,.25); margin-bottom: 8px; }
+  .creator h1 { font-size: 34px; } .creator h1 span { background: var(--grad); -webkit-background-clip: text; color: transparent; }
+  .creator p { color: var(--sub); max-width: 460px; line-height: 1.6; }
+  .tg { margin-top: 10px; display: inline-flex; align-items: center; gap: 10px; padding: 13px 24px; border-radius: 14px;
+        background: linear-gradient(135deg, #37aee2, #1e96c8); color: #fff; font-weight: 700; font-size: 16px;
+        box-shadow: 0 10px 40px rgba(42,171,238,.35); transition: transform .12s, box-shadow .2s; }
+  .tg:hover { transform: translateY(-2px); box-shadow: 0 14px 50px rgba(42,171,238,.5); }
+  .creator .links { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 10px; }
+  .creator .links .tg { margin-top: 0; }
+  .star { display: inline-flex; align-items: center; gap: 10px; padding: 13px 24px; border-radius: 14px; background: var(--grad); color: #1a1205;
+          font-weight: 700; font-size: 16px; box-shadow: 0 10px 40px rgba(255,150,30,.35); transition: transform .12s, box-shadow .2s; }
+  .star:hover { transform: translateY(-2px); box-shadow: 0 14px 50px rgba(255,150,30,.5); }
+  .chan { margin-top: 12px; color: var(--sub); font-size: 13px; cursor: pointer; } .chan:hover { color: var(--accent1); }
+  .creator .legal2 { margin-top: 26px; color: #5d5d6a; font-size: 12px; line-height: 1.6; max-width: 520px; }
+
+  /* login modal */
+  .modal { position: fixed; inset: 0; background: rgba(5,5,8,.75); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 10; }
+  .modal.on { display: flex; animation: fade .2s; }
+  .dialog { width: 400px; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 26px; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+  .dialog h3 { font-size: 20px; margin-bottom: 4px; } .dialog > p { color: var(--sub); margin-bottom: 18px; font-size: 13px; }
+  .tabs { display: flex; background: var(--card); border-radius: 12px; padding: 4px; margin-bottom: 16px; }
+  .tabs button { flex: 1; padding: 9px; border-radius: 9px; color: var(--sub); } .tabs button.on { background: var(--card2); color: var(--text); }
+  .dialog .field { margin-bottom: 10px; }
+  .err { color: var(--danger); font-size: 12px; min-height: 16px; margin: 2px 0 10px; }
+  .hint { color: var(--sub); font-size: 12px; margin-top: 12px; line-height: 1.5; }
+  .toast { position: fixed; right: 20px; bottom: 20px; background: var(--card); border-left: 3px solid var(--danger); padding: 12px 16px; border-radius: 10px;
+           max-width: 440px; display: none; z-index: 20; box-shadow: 0 10px 30px rgba(0,0,0,.4); font-size: 13px; }
+  .toast.on { display: block; animation: fade .2s; }
+</style>
+</head>
+<body>
+<div id="intro">
+  <svg viewBox="0 0 64 64"><defs><linearGradient id="gi" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd43b"/><stop offset="1" stop-color="#ff8a1f"/></linearGradient></defs>
+    <ellipse cx="29" cy="42" rx="22" ry="14" fill="url(#gi)"/><circle cx="40" cy="22" r="12" fill="#ffd43b"/>
+    <path d="M50 19 L62 23 L50 27 Z" fill="#ff8a1f"/><circle cx="43" cy="19" r="2.4" fill="#111"/></svg>
+  <div id="typed"></div>
+  <small id="introSub">MINECRAFT — ТОВАРНЫЙ ЗНАК MOJANG AB · T.ME/DUCKVISUAL</small>
+</div>
+
+<aside class="side">
+  <div class="brand">
+    <svg width="38" height="38" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd43b"/><stop offset="1" stop-color="#ff8a1f"/></linearGradient></defs>
+      <ellipse cx="29" cy="42" rx="22" ry="14" fill="url(#g)"/><circle cx="40" cy="22" r="12" fill="#ffd43b"/>
+      <path d="M50 19 L62 23 L50 27 Z" fill="#ff8a1f"/><circle cx="43" cy="19" r="2.4" fill="#111"/></svg>
+    <div><b><span>Duck</span> Launcher</b><small id="appVer">Minecraft · Duck Visual</small></div>
+  </div>
+  <nav class="nav">
+    <button class="on" data-page="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Играть</button>
+    <button data-page="mods"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg>Моды</button>
+    <button data-page="servers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg>Серверы</button>
+    <button data-page="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M1 12h3M20 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Настройки</button>
+    <button data-page="about"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>Функции</button>
+    <button data-page="creator"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Проект</button>
+  </nav>
+  <div class="spacer"></div>
+  <div class="account">
+    <div class="head" id="head"></div>
+    <div class="who"><b id="accName">Гость</b><small id="accType">не выполнен вход</small></div>
+    <button class="icon-btn" id="accBtn" title="Сменить аккаунт"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+  </div>
+  <div class="legal">Duck Launcher не является продуктом Mojang AB и не связан с Microsoft. Minecraft — товарный знак Mojang AB.</div>
+</aside>
+
+<main class="main">
+  <section class="page on" id="page-home">
+    <div class="hero" id="hero">
+      <div class="info">
+        <h1 id="heroTitle"><span>Duck</span> Visual</h1>
+        <p id="heroSub">Minecraft 1.21.4 · Fabric · 61 визуальная функция · меню на Right Shift</p>
+        <div class="chips" id="chips">
+          <span class="chip">TargetESP</span><span class="chip">Trajectories</span><span class="chip">China Hat</span>
+          <span class="chip">Nametags</span><span class="chip">Music HUD</span><span class="chip">Custom Sky</span><span class="chip">26 палитр</span>
+        </div>
+      </div>
+    </div>
+    <div class="bar">
+      <div class="picker">
+        <button class="vbtn" id="vbtn"><small>Версия</small><b id="vlabel">1.21.4</b></button>
+        <div class="menu" id="vmenu">
+          <div class="loaders"><button data-loader="fabric">Fabric</button><button data-loader="vanilla">Vanilla</button></div>
+          <div class="vlist" id="vlist"><div class="muted" style="padding:10px">Загрузка списка версий...</div></div>
+        </div>
+      </div>
+      <div class="status">
+        <div class="t"><b id="stage">Готов к игре</b><span id="count"></span></div>
+        <div class="track"><div class="fill" id="fill"></div></div>
+      </div>
+      <button class="play" id="play">ИГРАТЬ</button>
+    </div>
+  </section>
+
+
+  <section class="page" id="page-mods">
+    <h2 style="display:flex;align-items:center;gap:10px">Моды <span class="badge gray" id="modsFor"></span></h2>
+    <div class="tools">
+      <div class="seg" id="modSrc"><button data-v="modrinth" class="on">Modrinth</button><button data-v="curseforge">CurseForge</button></div>
+      <div class="seg" id="modView"><button data-v="catalog" class="on">Каталог</button><button data-v="installed">Мои моды<span class="cnt" id="modCnt">0</span></button></div>
+    </div>
+    <div class="tools" id="modSearchBar">
+      <input class="field" id="modQuery" placeholder="Поиск модов: карта, миникарта, зум, шейдеры...">
+      <select class="field" id="modSort"><option value="relevance">По релевантности</option><option value="downloads">Популярные</option><option value="updated">Обновлённые</option></select>
+    </div>
+    <div class="scroll" id="modList" style="flex:1"></div>
+  </section>
+
+  <section class="page" id="page-servers">
+    <h2>Серверы</h2>
+    <div class="scroll" id="srvList"></div>
+    <div class="hint" style="margin-top:4px">Сервер уже добавлен в «Сетевую игру» в Minecraft на любой версии. Кнопка «Играть на сервере» запускает игру и сразу подключает к нему.</div>
+  </section>
+
+  <section class="page" id="page-settings">
+    <h2>Настройки</h2>
+    <div class="scroll">
+      <div class="sec">Производительность</div>
+      <div class="card">
+        <div class="row" style="display:block"><div style="margin-bottom:10px">Профиль графики<small id="presetHint"></small></div>
+          <div class="seg" id="preset"><button data-v="auto">Авто</button><button data-v="fps">Максимум FPS</button><button data-v="balanced">Баланс</button><button data-v="quality">Качество</button><button data-v="none">Не трогать</button></div></div>
+        <div class="row"><div>Высокий приоритет игры<small>Windows отдаёт игре процессор раньше фоновых программ — меньше фризов</small></div><button class="switch" id="highPriority"></button></div>
+        <div class="row"><div>Мощная видеокарта<small>На ноутбуках игра запускается на дискретной видеокарте (NVIDIA / AMD), а не на встроенной</small></div><button class="switch" id="dgpu"></button></div>
+        <div class="row"><div>Быстрый запуск<small>Java кэширует классы игры: со второго запуска игра открывается быстрее</small></div><button class="switch" id="fastStart"></button></div>
+        <div class="row"><div>Оперативная память<small id="ramHint">Авто — подбирается под твой компьютер</small></div>
+          <div style="display:flex;align-items:center;gap:10px"><button class="btn" id="ramAuto">Авто</button><input type="range" id="ram" min="1024" step="256"><b id="ramVal" style="width:64px;text-align:right"></b></div></div>
+      </div>
+      <div class="card" id="modsCard">
+        <div style="margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;gap:10px"><div>Моды оптимизации<small style="display:block;color:var(--sub);font-size:12px;margin-top:2px">Ставятся сами для версий с Fabric вместе с нужными им библиотеками. Если мода нет для выбранной версии — он пропускается.</small></div><button class="btn" id="modsAll">Включить все</button></div>
+      </div>
+      <div class="sec">Игра</div>
+      <div class="card">
+        <div class="row"><div>Полноэкранный режим<small>Иначе окно указанного размера</small></div><button class="switch" id="fullscreen"></button></div>
+        <div class="row"><div>Размер окна<small>Ширина × высота</small></div>
+          <div style="display:flex;align-items:center;gap:8px"><input class="field small-field" id="width" inputmode="numeric"><span style="color:var(--sub)">×</span><input class="field small-field" id="height" inputmode="numeric"></div></div>
+        <div class="row"><div>Язык игры</div>
+          <select class="field" id="lang"><option value="ru_ru">Русский</option><option value="uk_ua">Українська</option><option value="be_by">Беларуская</option><option value="kk_kz">Қазақша</option><option value="en_us">English</option></select></div>
+      </div>
+      <div class="sec">CurseForge</div>
+      <div class="card">
+        <div class="row" style="display:block"><div style="margin-bottom:8px">API-ключ CurseForge<small>CurseForge выдаёт доступ к каталогу только по ключу. Он бесплатный: войди на console.curseforge.com → API Keys, скопируй ключ и вставь сюда. Modrinth работает без ключа.</small></div>
+          <div style="display:flex;gap:8px"><input class="field" id="cfKey" type="password" placeholder="$2a$10$..."><button class="btn" id="cfGet">Получить ключ</button></div></div>
+      </div>
+      <div class="sec">Лаунчер</div>
+      <div class="card">
+        <div class="row"><div>После запуска игры<small>«Закрыть» освобождает память на слабых ПК</small></div>
+          <div class="seg" id="after"><button data-v="keep">Оставить</button><button data-v="minimize">Свернуть</button><button data-v="close">Закрыть</button></div></div>
+        <div class="row" style="display:block"><div style="margin-bottom:8px">Аргументы Java<small>Для опытных, можно оставить пустым</small></div>
+          <input class="field" id="jvm" placeholder="-XX:+UseStringDeduplication"></div>
+      </div>
+      <div class="card">
+        <div style="margin-bottom:10px">Папки</div>
+        <div class="btns">
+          <button class="btn" data-open="game">Папка игры</button><button class="btn" data-open="mods">Моды</button>
+          <button class="btn" data-open="screenshots">Скриншоты</button><button class="btn" data-open="logs">Логи</button><button class="btn" data-open="base">Лаунчер</button>
+        </div>
+        <small id="dir" style="display:block;color:var(--sub);font-size:12px;margin-top:10px"></small>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page-about">
+    <h2>Что внутри Duck Visual</h2>
+    <div class="scroll"><div class="grid">
+      <div class="feat"><b><i>Бой</i></b><p>TargetESP, TargetHud, HitParticles, DamageIndicators, CritIndicator, Hitmarker, TargetCircle, KillEffects, HitSounds, TotemCounter, CombatInfo.</p></div>
+      <div class="feat"><b><i>Игроки</i></b><p>Nametags, HealthTags, GlowESP, BoxESP, HitBoxes, Tracers, Arrows, CustomModels (утка, амогус, кролик, пингвин), China Hat.</p></div>
+      <div class="feat"><b><i>Снаряды</i></b><p>Trajectories — точка падения лука, жемчуга, зелий, трезубца; чей жемчуг и через сколько он прилетит.</p></div>
+      <div class="feat"><b><i>HUD</i></b><p>Watermark, ArrayList, Keybinds, Potions, ArmorHud, Cooldowns, Music, TabList, Scoreboard, CustomHotbar с биндами на слоты, LowHealth.</p></div>
+      <div class="feat"><b><i>Мир</i></b><p>CustomSky со звёздами и сиянием, WorldColor, WorldParticles (светлячки, снег, сакура), Fullbright, TimeChanger, BreakEffects, ItemPhysics.</p></div>
+      <div class="feat"><b><i>Камера и руки</i></b><p>Freelook, Zoom, MotionBlur, ViewModel, SwingAnimation, HandTint, AspectRatio, Crosshair, NoRender.</p></div>
+      <div class="feat"><b><i>Стиль</i></b><p>26 палитр, шрифт Montserrat, свой стиль меню Minecraft, анимированное главное меню, ClickGUI с блюром.</p></div>
+      <div class="feat"><b><i>Удобство</i></b><p>Конфиги, команды .bind / .set / .config, вкладка «Описание» с подробным описанием каждой функции.</p></div>
+    </div></div>
+  </section>
+
+  <section class="page" id="page-creator">
+    <div class="creator">
+      <div class="avatar"><svg width="78" height="78" viewBox="0 0 64 64"><defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd43b"/><stop offset="1" stop-color="#ff8a1f"/></linearGradient></defs>
+        <ellipse cx="29" cy="42" rx="22" ry="14" fill="url(#g2)"/><circle cx="40" cy="22" r="12" fill="#ffd43b"/>
+        <path d="M50 19 L62 23 L50 27 Z" fill="#ff8a1f"/><circle cx="43" cy="19" r="2.4" fill="#111"/></svg></div>
+      <div style="color:var(--sub);letter-spacing:1.5px;font-size:12px">О ПРОЕКТЕ</div>
+      <h1><span>Duck</span> Visual</h1>
+      <p>Duck Visual и Duck Launcher. Новости, идеи и баги — в нашем Telegram-канале. Если хочешь поддержать проект — поставь ⭐ на закреплённый пост.</p>
+      <div class="links">
+      <button class="tg" id="tgBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M21.9 4.3 18.6 19.8c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.2-8.3c.4-.4-.1-.6-.6-.2L6 13.4l-4.9-1.5c-1.1-.3-1.1-1.1.2-1.6L20.5 2.9c.9-.3 1.7.2 1.4 1.4z"/></svg>Канал @DuckVisual</button>
+      <button class="star" id="starBtn">★ Поддержать звёздами</button>
+      </div>
+            <div class="legal2">Duck Launcher и Duck Visual не являются продуктами Mojang AB и не связаны с Mojang AB или Microsoft.<br>Minecraft — товарный знак Mojang AB. Игровые файлы загружаются с официальных серверов Mojang.</div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="login">
+  <div class="dialog">
+    <h3>Вход</h3>
+    <p>Выбери, как играть. Данные хранятся только на твоём компьютере.</p>
+    <div class="tabs"><button class="on" data-tab="offline">Без лицензии</button><button data-tab="ely">Ely.by</button></div>
+    <div id="tab-offline"><input class="field" id="nick" maxlength="16" placeholder="Никнейм (латиница, 3–16 символов)"></div>
+    <div id="tab-ely" style="display:none">
+      <input class="field" id="elyLogin" placeholder="Логин или e-mail Ely.by">
+      <input class="field" id="elyPass" type="password" placeholder="Пароль">
+    </div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn primary" id="loginBtn" style="width:100%;padding:12px">Войти</button>
+    <div class="hint" id="loginHint">Ник без лицензии работает на серверах с оффлайн-режимом (например FunTime). Скин виден только с Ely.by.</div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+let st = {};
+let loginTab = 'offline';
+let versions = null;
+
+/* ---------- intro: typed disclaimer ---------- */
+(function intro() {
+  const text = 'DUCK LAUNCHER НЕ ЯВЛЯЕТСЯ ПРОДУКТОМ MOJANG AB';
+  const el = $('#typed'), box = $('#intro'), sub = $('#introSub');
+  let i = 0;
+  const tick = () => {
+    el.textContent = text.slice(0, ++i);
+    if (i < text.length) setTimeout(tick, 38 + Math.random() * 30);
+    else {
+      sub.classList.add('on');
+      setTimeout(() => box.classList.add('hide'), 1300);
+    }
+  };
+  setTimeout(tick, 450);
+  box.onclick = () => box.classList.add('hide');
+})();
+
+const stageNames = {
+  java: 'Загрузка Java', 'java-extract': 'Распаковка Java', meta: 'Получение версии', libraries: 'Библиотеки Minecraft',
+  assets: 'Ресурсы игры', 'mods-resolve': 'Поиск модов', mods: 'Моды', auth: 'Ely.by', launch: 'Запуск игры...'
+};
+
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), 8000);
+}
+
+function setHead(acc) {
+  const h = $('#head');
+  if (!acc) { h.style.backgroundImage = ''; h.textContent = '?'; return; }
+  h.textContent = '';
+  const img = new Image();
+  img.onload = () => { h.style.backgroundImage = `url(${img.src})`; };
+  img.onerror = () => { h.style.backgroundImage = ''; h.textContent = acc.name[0].toUpperCase(); };
+  img.src = 'https://skinsystem.ely.by/skins/' + encodeURIComponent(acc.name) + '.png';
+}
+
+function updateVersionUI() {
+  const duck = st.version === st.duckVersion && st.loader === 'fabric';
+  $('#vlabel').innerHTML = st.version + (duck ? ' <span class="badge">DUCK</span>' : ` <span class="badge gray">${st.loader === 'fabric' ? 'Fabric' : 'Vanilla'}</span>`);
+  $('#heroTitle').innerHTML = duck ? '<span>Duck</span> Visual' : 'Minecraft <span>' + st.version + '</span>';
+  $('#heroSub').textContent = duck ? 'Minecraft 1.21.4 · Fabric · 61 визуальная функция · меню на Right Shift'
+    : (st.loader === 'fabric' ? 'Fabric · моды оптимизации · Duck Visual доступен только на ' + st.duckVersion : 'Чистый Minecraft без модов');
+  $('#chips').style.display = duck ? '' : 'none';
+  $$('.loaders button').forEach(b => b.classList.toggle('on', b.dataset.loader === st.loader));
+}
+
+async function refresh() {
+  st = await dlState();
+  $('#appVer').textContent = 'v' + st.appVersion + ' · Duck Visual';
+  $('#accName').textContent = st.account ? st.account.name : 'Гость';
+  $('#accType').textContent = st.account ? (st.account.type === 'ely' ? 'Ely.by' : 'без лицензии') : 'не выполнен вход';
+  setHead(st.account);
+  const max = Math.max(2048, Math.min(16384, st.maxMemoryMb - 1024));
+  $('#ram').max = max;
+  $('#ram').value = st.memoryMb || st.autoMemoryMb; ramLabel();
+  $$('#preset button').forEach(b => b.classList.toggle('on', b.dataset.v === st.preset));
+  presetHint();
+  ['highPriority', 'dgpu', 'fastStart'].forEach(k => $('#' + k).classList.toggle('on', !!st[k]));
+  $('#fullscreen').classList.toggle('on', st.fullscreen);
+  $('#width').value = st.width; $('#height').value = st.height;
+  $('#lang').value = st.lang;
+  $$('#after button').forEach(b => b.classList.toggle('on', b.dataset.v === st.afterLaunch));
+  $('#jvm').value = st.jvmArgs || '';
+  $('#dir').textContent = st.dir;
+  $('#cfKey').placeholder = st.cfKey ? 'Ключ сохранён (вставь новый, чтобы заменить; пусто — удалить)' : 'Вставь API-ключ CurseForge';
+  const mc = $('#modsCard');
+  mc.querySelectorAll('.row').forEach(r => r.remove());
+  const groups = { fps: 'FPS и графика', cpu: 'Процессор и мир', mem: 'Память и запуск', net: 'Сеть' };
+  let lastGroup = '';
+  st.perfMods.forEach(m => {
+    if (m.group !== lastGroup) {
+      lastGroup = m.group;
+      const h = document.createElement('div'); h.className = 'row grp'; h.innerHTML = `<div class="sec" style="margin:0">${groups[m.group] || m.group}</div>`;
+      mc.appendChild(h);
+    }
+    const row = document.createElement('div'); row.className = 'row';
+    row.innerHTML = `<div>${m.name}<small>${m.about}${m.needs ? ' · нужен Sodium' : ''}${m.default ? '' : ' · по умолчанию выключен'}</small></div><button class="switch ${st.mods[m.slug] ? 'on' : ''}" data-mod="${m.slug}"></button>`;
+    row.querySelector('.switch').onclick = e => { e.target.classList.toggle('on'); save(); };
+    mc.appendChild(row);
+  });
+  updateVersionUI();
+  $('#play').disabled = st.busy || st.running;
+  if (st.running) $('#play').textContent = 'В ИГРЕ';
+  if (!st.account) openLogin();
+}
+
+function ramLabel() {
+  const auto = !st.memoryMb;
+  $('#ramVal').textContent = (Math.round($('#ram').value / 102.4) / 10) + ' ГБ';
+  $('#ramAuto').classList.toggle('primary', auto);
+  $('#ramHint').textContent = auto ? 'Авто — подобрано под твой ПК (' + Math.round(st.maxMemoryMb / 1024) + ' ГБ ОЗУ)' : 'Вручную. Оставь системе хотя бы 2 ГБ';
+}
+function save() { dlSaveSettings(settingsData()); }
+function settingsData() {
+  const mods = {};
+  $$('[data-mod]').forEach(s => mods[s.dataset.mod] = s.classList.contains('on'));
+  const after = [...$$('#after button')].find(b => b.classList.contains('on'));
+  return {
+    memoryMb: st.memoryMb || 0, mods, preset: ([...$$('#preset button')].find(b => b.classList.contains('on')) || {dataset: {v: st.preset}}).dataset.v,
+    highPriority: $('#highPriority').classList.contains('on'), dgpu: $('#dgpu').classList.contains('on'), fastStart: $('#fastStart').classList.contains('on'),
+    width: parseInt($('#width').value) || 1280, height: parseInt($('#height').value) || 720,
+    fullscreen: $('#fullscreen').classList.contains('on'), lang: $('#lang').value,
+    afterLaunch: after ? after.dataset.v : 'minimize', jvmArgs: $('#jvm').value
+  };
+}
+
+$$('.nav button').forEach(b => b.onclick = () => {
+  $$('.nav button').forEach(x => x.classList.remove('on'));
+  $$('.page').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); $('#page-' + b.dataset.page).classList.add('on');
+});
+const presetText = {
+  auto: () => 'Подбирается под твой ПК: ' + (st.maxMemoryMb <= 6144 ? '«Максимум FPS»' : '«Баланс»'),
+  fps: () => 'Дальность 6, быстрая графика и листва, без облаков, теней и блюра меню, минимум частиц',
+  balanced: () => 'Дальность 10, красивая графика, быстрые облака, меньше частиц',
+  quality: () => 'Дальность 16, всё красиво. Для мощных ПК',
+  none: () => 'Лаунчер не меняет настройки графики'
+};
+function presetHint() { const v = ([...$$('#preset button')].find(b => b.classList.contains('on')) || {}).dataset?.v || st.preset;
+  $('#presetHint').textContent = (presetText[v] || presetText.none)() + (v !== 'none' ? '. Применяется при следующем запуске, дальше можно менять в игре.' : ''); }
+$$('#preset button').forEach(b => b.onclick = () => { $$('#preset button').forEach(x => x.classList.remove('on')); b.classList.add('on'); presetHint(); save(); });
+$('#modsAll').onclick = () => { $$('[data-mod]').forEach(x => x.classList.add('on')); save(); };
+['#highPriority', '#dgpu', '#fastStart', '#fullscreen'].forEach(id => $(id).onclick = () => { $(id).classList.toggle('on'); save(); });
+$$('#after button').forEach(b => b.onclick = () => { $$('#after button').forEach(x => x.classList.remove('on')); b.classList.add('on'); save(); });
+$('#ram').oninput = () => { st.memoryMb = +$('#ram').value; ramLabel(); };
+$('#ram').onchange = save;
+$('#ramAuto').onclick = () => { st.memoryMb = 0; $('#ram').value = st.autoMemoryMb; ramLabel(); save(); };
+['#jvm', '#width', '#height', '#lang'].forEach(id => $(id).onchange = save);
+$$('[data-open]').forEach(b => b.onclick = () => dlOpen(b.dataset.open));
+$('#tgBtn').onclick = () => dlOpenURL('https://t.me/duckvisual');
+$('#starBtn').onclick = () => dlOpenURL('https://t.me/duckvisual/2');
+
+/* ---------- version picker ---------- */
+function renderVersions() {
+  const list = $('#vlist');
+  if (!versions) return;
+  list.innerHTML = '';
+  versions.forEach(v => {
+    const b = document.createElement('button');
+    if (v.id === st.version) b.className = 'on';
+    const tag = v.duck ? '<span class="badge">DUCK VISUAL</span>' : v.fabric ? '<span class="muted">Fabric · Vanilla</span>' : '<span class="muted">Vanilla</span>';
+    b.innerHTML = `<span>${v.id}</span>${tag}`;
+    b.onclick = async () => {
+      const loader = v.fabric ? (st.loader === 'vanilla' && !v.duck ? 'vanilla' : 'fabric') : 'vanilla';
+      await dlSetVersion(v.id, loader);
+      $('#vmenu').classList.remove('on');
+      await refresh();
+    };
+    list.appendChild(b);
+  });
+  const cur = versions.find(v => v.id === st.version);
+  $$('.loaders button').forEach(b => b.disabled = b.dataset.loader === 'fabric' && cur && !cur.fabric);
+}
+$('#vbtn').onclick = async e => {
+  e.stopPropagation();
+  $('#vmenu').classList.toggle('on');
+  if (!versions) {
+    try { versions = await dlVersions(); } catch (err) { $('#vlist').innerHTML = '<div class="muted" style="padding:10px">Нет связи с серверами Mojang</div>'; return; }
+  }
+  renderVersions();
+};
+$('#vmenu').onclick = e => e.stopPropagation();
+document.addEventListener('click', () => $('#vmenu').classList.remove('on'));
+$$('.loaders button').forEach(b => b.onclick = async () => {
+  if (b.disabled) return;
+  await dlSetVersion('', b.dataset.loader); await refresh(); renderVersions();
+});
+
+/* ---------- login ---------- */
+function openLogin() { $('#login').classList.add('on'); $('#loginErr').textContent = ''; setTimeout(() => $('#nick').focus(), 50); }
+$('#accBtn').onclick = async () => { await dlLogout(); await refresh(); };
+$$('.tabs button').forEach(b => b.onclick = () => {
+  $$('.tabs button').forEach(x => x.classList.remove('on')); b.classList.add('on');
+  loginTab = b.dataset.tab;
+  $('#tab-offline').style.display = loginTab === 'offline' ? '' : 'none';
+  $('#tab-ely').style.display = loginTab === 'ely' ? '' : 'none';
+  $('#loginHint').textContent = loginTab === 'ely'
+    ? 'Аккаунт Ely.by: свой скин и плащ, работает на серверах с поддержкой Ely.by. Если включена 2FA — пароль:код.'
+    : 'Ник без лицензии работает на серверах с оффлайн-режимом (например FunTime). Скин виден только с Ely.by.';
+});
+async function doLogin() {
+  $('#loginBtn').disabled = true; $('#loginErr').textContent = '';
+  const err = loginTab === 'offline' ? await dlLoginOffline($('#nick').value.trim())
+                                     : await dlLoginEly($('#elyLogin').value.trim(), $('#elyPass').value);
+  $('#loginBtn').disabled = false;
+  if (err) { $('#loginErr').textContent = err; return; }
+  $('#elyPass').value = '';
+  $('#login').classList.remove('on'); refresh();
+}
+$('#loginBtn').onclick = doLogin;
+$$('#login input').forEach(i => i.onkeydown = e => { if (e.key === 'Enter') doLogin(); });
+
+/* ---------- play ---------- */
+$('#play').onclick = async () => {
+  if (!st.account) { openLogin(); return; }
+  $('#play').disabled = true; $('#play').textContent = 'ЗАГРУЗКА';
+  $('#stage').textContent = 'Подготовка...'; $('#fill').style.width = '0%';
+  const err = await dlPlay();
+  if (err) { toast(err); $('#play').disabled = false; $('#play').textContent = 'ИГРАТЬ'; }
+};
+window.onProgress = (stage, done, total) => {
+  $('#stage').textContent = stageNames[stage] || stage;
+  const pct = total > 0 ? Math.min(100, done / total * 100) : 100;
+  $('#fill').style.width = pct + '%';
+  $('#count').textContent = stage === 'java' ? `${(done / 1048576).toFixed(1)} / ${(total / 1048576).toFixed(1)} МБ`
+                           : total > 1 ? `${done} / ${total}` : '';
+};
+window.onLaunched = () => {
+  $('#stage').textContent = 'Игра запущена, приятной игры!'; $('#count').textContent = '';
+  $('#fill').style.width = '100%'; $('#play').textContent = 'В ИГРЕ';
+};
+window.onGameExit = (err) => {
+  $('#play').disabled = false; $('#play').textContent = 'ИГРАТЬ';
+  $('#stage').textContent = err ? 'Игра закрылась с ошибкой' : 'Готов к игре'; $('#fill').style.width = '0%';
+  if (err) toast('Игра завершилась с ошибкой (' + err + '). Логи: Настройки → Папки → Логи');
+};
+window.onError = (msg) => {
+  $('#play').disabled = false; $('#play').textContent = 'ИГРАТЬ';
+  $('#stage').textContent = 'Ошибка'; toast(msg);
+};
+
+
+/* ---------- mods ---------- */
+const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtNum = n => n >= 1e6 ? (n / 1e6).toFixed(1).replace('.0', '') + ' млн' : n >= 1e3 ? Math.round(n / 1e3) + ' тыс' : String(n);
+const mods = { src: 'modrinth', view: 'catalog', page: 0, items: [], loading: false, end: false, busy: {} };
+
+function modsAvailable() {
+  $('#modsFor').textContent = st.loader === 'fabric' ? 'Fabric ' + st.version : st.version + ' · Vanilla';
+  return st.loader === 'fabric';
+}
+function modIcon(url) { return url ? `<img src="${esc(url)}" loading="lazy" onerror="this.outerHTML='<div class=noimg></div>'">` : '<div class="noimg"></div>'; }
+function modButton(m) {
+  if (m.auto) return '<button class="btn" disabled>Ставит лаунчер</button>';
+  if (mods.busy[m.id] !== undefined) return `<button class="btn" disabled>${mods.busy[m.id]}</button>`;
+  if (m.installed) return '<button class="btn done" data-act="remove">Установлен ✓</button>';
+  return '<button class="btn primary" data-act="install">Установить</button>';
+}
+function modRow(m) {
+  const d = document.createElement('div'); d.className = 'mod'; d.dataset.id = m.id;
+  d.innerHTML = `${modIcon(m.icon)}<div class="txt"><b>${esc(m.title)}${m.url ? '<a>страница ↗</a>' : ''}</b><p>${esc(m.description)}</p>
+    <div class="meta">${m.author ? esc(m.author) + ' · ' : ''}${fmtNum(m.downloads || 0)} загрузок</div></div><div class="act">${modButton(m)}</div>`;
+  const a = d.querySelector('.txt a'); if (a) a.onclick = () => dlOpenURL(m.url);
+  d.querySelector('.act').onclick = e => {
+    const act = e.target.dataset.act;
+    if (act === 'install') installMod(m);
+    if (act === 'remove') removeMod(m.source, m.id);
+  };
+  return d;
+}
+function modsMessage(html) { $('#modList').innerHTML = `<div class="empty">${html}</div>`; }
+
+async function loadMods(reset) {
+  if (!modsAvailable()) {
+    modsMessage('Моды ставятся только на <b>Fabric</b>.<br>Открой «Играть» → меню версии → Fabric.'); return;
+  }
+  if (mods.view === 'installed') return showInstalled();
+  if (reset) { mods.page = 0; mods.items = []; mods.end = false; $('#modList').innerHTML = ''; }
+  if (mods.loading || mods.end) return;
+  if (mods.src === 'curseforge' && !st.cfKey) {
+    modsMessage('Для CurseForge нужен бесплатный API-ключ — без него CurseForge не отдаёт каталог сторонним лаунчерам.<br>Вставь его в <b>Настройки → CurseForge</b>. Modrinth работает без ключа.<br><button class="btn primary" id="toCf">Открыть настройки</button>');
+    $('#toCf').onclick = () => $('[data-page=settings]').click(); return;
+  }
+  mods.loading = true;
+  const q = $('#modQuery').value.trim(), token = (loadMods.token = (loadMods.token || 0) + 1);
+  if (reset) modsMessage('Загрузка...');
+  let res;
+  try { res = await dlModsSearch(mods.src, q, $('#modSort').value, mods.page); }
+  catch (e) { mods.loading = false; if (token === loadMods.token) modsMessage(esc(e.message || e)); return; }
+  mods.loading = false;
+  if (token !== loadMods.token) return;
+  const list = $('#modList');
+  if (mods.page === 0) list.innerHTML = '';
+  list.querySelector('.more')?.remove();
+  if (!res.length && mods.page === 0) { modsMessage('Ничего не нашлось для ' + esc(st.version) + '. Попробуй другой запрос.'); return; }
+  res.forEach(m => { mods.items.push(m); list.appendChild(modRow(m)); });
+  mods.page++;
+  if (res.length < 20) mods.end = true;
+  else {
+    const more = document.createElement('div'); more.className = 'empty more';
+    more.innerHTML = '<button class="btn">Показать ещё</button>'; more.querySelector('button').onclick = () => loadMods(false);
+    list.appendChild(more);
+  }
+}
+async function updateModCount() { const l = await dlModsInstalled(); $('#modCnt').textContent = l.filter(m => !m.dep).length; return l; }
+async function showInstalled() {
+  const l = await updateModCount();
+  if (!l.length) { modsMessage('Ты ещё не ставил модов из каталога.<br>Свои .jar можно класть в папку: Настройки → Папки → Моды.'); return; }
+  const list = $('#modList'); list.innerHTML = '';
+  l.forEach(m => list.appendChild(modRow({ ...m, description: m.dep ? 'Нужен другим модам (зависимость)' : m.file, installed: true, downloads: 0, author: m.source === 'curseforge' ? 'CurseForge' : 'Modrinth' })));
+  list.querySelectorAll('.meta').forEach(x => x.textContent = x.textContent.replace(/ · 0 загрузок$/, ''));
+}
+function refreshModRow(id) {
+  const m = mods.items.find(x => x.id === id);
+  const row = [...$$('#modList .mod')].find(r => r.dataset.id === id);
+  if (m && row) row.querySelector('.act').innerHTML = modButton(m);
+}
+function installMod(m) {
+  mods.busy[m.id] = 'Загрузка...'; refreshModRow(m.id);
+  dlModInstall(m.source, m.id);
+}
+window.onModProgress = (id, done, total) => {
+  if (mods.busy[id] === undefined) return;
+  mods.busy[id] = total > 0 ? Math.round(done / total * 100) + '%' : 'Загрузка...'; refreshModRow(id);
+};
+window.onModInstalled = (id, title, err) => {
+  delete mods.busy[id];
+  const m = mods.items.find(x => x.id === id);
+  if (err) toast(err); else { if (m) m.installed = true; toast('Установлен: ' + title); }
+  refreshModRow(id); updateModCount();
+};
+async function removeMod(source, id) {
+  const err = await dlModRemove(source, id);
+  if (err) { toast(err); return; }
+  const m = mods.items.find(x => x.id === id); if (m) m.installed = false;
+  if (mods.view === 'installed') showInstalled(); else { refreshModRow(id); updateModCount(); }
+}
+$$('#modSrc button').forEach(b => b.onclick = () => { $$('#modSrc button').forEach(x => x.classList.toggle('on', x === b)); mods.src = b.dataset.v; mods.view = 'catalog';
+  $$('#modView button').forEach(x => x.classList.toggle('on', x.dataset.v === 'catalog')); $('#modSearchBar').style.display = ''; loadMods(true); });
+$$('#modView button').forEach(b => b.onclick = () => { $$('#modView button').forEach(x => x.classList.toggle('on', x === b)); mods.view = b.dataset.v;
+  $('#modSearchBar').style.display = mods.view === 'catalog' ? '' : 'none'; loadMods(true); });
+$('#modQuery').oninput = () => { clearTimeout(loadMods.h); loadMods.h = setTimeout(() => loadMods(true), 350); };
+$('#modSort').onchange = () => loadMods(true);
+$('#modList').onscroll = e => { const el = e.target; if (mods.view === 'catalog' && el.scrollTop + el.clientHeight > el.scrollHeight - 200) loadMods(false); };
+
+/* ---------- servers ---------- */
+function motdHTML(t) {
+  const colors = { 0:'#000',1:'#00a',2:'#0a0',3:'#0aa',4:'#a00',5:'#a0a',6:'#fa0',7:'#aaa',8:'#555',9:'#55f',a:'#5f5',b:'#5ff',c:'#f55',d:'#f5f',e:'#ff5',f:'#fff' };
+  let out = '', color = '#aaa', bold = false, i = 0;
+  while (i < t.length) {
+    if (t[i] === '§' && i + 1 < t.length) {
+      const c = t[i + 1].toLowerCase();
+      if (c === '#' && /^[0-9a-f]{6}$/i.test(t.substr(i + 2, 6))) { color = '#' + t.substr(i + 2, 6); bold = false; i += 8; continue; }
+      if (colors[c]) { color = colors[c]; bold = false; } else if (c === 'l') bold = true; else if (c === 'r') { color = '#aaa'; bold = false; }
+      i += 2; continue;
+    }
+    let j = i; while (j < t.length && t[j] !== '§') j++;
+    out += `<span style="color:${color}${bold ? ';font-weight:700' : ''}">${esc(t.slice(i, j))}</span>`; i = j;
+  }
+  return out;
+}
+let serverList = null;
+async function loadServers() {
+  if (!serverList) serverList = await dlServers();
+  const box = $('#srvList'); box.innerHTML = '';
+  serverList.forEach((s, i) => {
+    const d = document.createElement('div'); d.className = 'srv';
+    d.innerHTML = `<div class="ic"><svg width="44" height="44" viewBox="0 0 64 64"><ellipse cx="29" cy="42" rx="22" ry="14" fill="#ffb02e"/><circle cx="40" cy="22" r="12" fill="#ffd43b"/><path d="M50 19 L62 23 L50 27 Z" fill="#ff8a1f"/><circle cx="43" cy="19" r="2.4" fill="#111"/></svg></div>
+      <div class="txt"><b>${esc(s.name)}</b><div class="addr" title="Скопировать">${esc(s.port && s.port !== 25565 ? s.host + ':' + s.port : s.host)} ⧉</div>
+      <div class="motd">Проверяем сервер...</div><div class="stat"><span class="st"><b class="dot"></b><span class="stt">...</span></span><span class="pl"></span><span class="pg"></span></div></div>
+      <button class="play">ИГРАТЬ НА СЕРВЕРЕ</button>`;
+    d.querySelector('.addr').onclick = () => { navigator.clipboard?.writeText(d.querySelector('.addr').textContent.replace(' ⧉', '')); toast('Адрес скопирован'); };
+    d.querySelector('.play').onclick = async () => {
+      if (!st.account) { openLogin(); return; }
+      $('[data-page=home]').click();
+      $('#play').disabled = true; $('#play').textContent = 'ЗАГРУЗКА'; $('#stage').textContent = 'Подготовка...'; $('#fill').style.width = '0%';
+      const err = await dlJoinServer(i);
+      if (err) { toast(err); $('#play').disabled = false; $('#play').textContent = 'ИГРАТЬ'; }
+    };
+    box.appendChild(d);
+    dlPingServer(i).then(r => {
+      d.querySelector('.dot').classList.toggle('on', r.online);
+      d.querySelector('.stt').textContent = r.online ? 'Онлайн' : 'Оффлайн';
+      d.querySelector('.motd').innerHTML = r.online ? motdHTML(r.motd || '') : esc(r.error || 'Сервер не отвечает');
+      if (r.online) {
+        d.querySelector('.pl').textContent = `👥 ${r.players} / ${r.maxPlayers}`;
+        d.querySelector('.pg').textContent = `📶 ${r.ping} мс` + (r.version ? ' · ' + r.version : '');
+        if (r.favicon) d.querySelector('.ic').innerHTML = `<img src="${esc(r.favicon)}">`;
+      }
+    });
+  });
+}
+
+$$('.nav button').forEach(b => b.addEventListener('click', () => {
+  if (b.dataset.page === 'mods') loadMods(true);
+  if (b.dataset.page === 'servers') loadServers();
+}));
+$('#cfKey').onchange = async () => { await dlSaveSettings({ ...settingsData(), cfKey: $('#cfKey').value }); $('#cfKey').value = ''; await refresh(); toast(st.cfKey ? 'Ключ CurseForge сохранён' : 'Ключ CurseForge удалён'); };
+$('#cfGet').onclick = () => dlOpenURL('https://console.curseforge.com/');
+
+$('#hero').style.backgroundImage = 'url(data:image/jpeg;base64,{{HERO}})';
+refresh();
+</script>
+</body>
+</html>
