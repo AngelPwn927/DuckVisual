@@ -1,7 +1,6 @@
 import base64,re,os,sys
 S=os.path.dirname(os.path.abspath(__file__))
 src=open(S+'/src.html').read()
-base='https://github.com/dima6546446-boop/Xd/raw/claude/modest-maxwell-nbqvn1/'
 rel='https://github.com/AngelPwn927/DuckVisual/releases/latest/download/'
 src=src.replace('{{EXE}}',rel+'DuckLauncher.exe').replace('{{JAR}}',rel+'duck-visual.jar')
 a='ChinaHat TargetESP JumpCircles Trails Trajectories HitParticles DamageIndicators CritIndicator Hitmarker KillEffects GlowESP Nametags HealthTags BoxESP HitBoxes Tracers Arrows CustomModels Freelook Zoom MotionBlur'.split()

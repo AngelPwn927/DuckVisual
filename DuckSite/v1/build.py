@@ -1,7 +1,7 @@
 import base64,re,sys,os
 S=os.path.dirname(os.path.abspath(__file__))
 src=open(S+'/src.html').read()
-dl='https://github.com/dima6546446-boop/Xd/raw/claude/modest-maxwell-nbqvn1/DuckLauncher/dist/Duck%20Launcher.exe'
+dl='https://github.com/AngelPwn927/DuckVisual/releases/latest/download/DuckLauncher.exe'
 src=src.replace('{{DOWNLOAD}}',dl)
 src=re.sub(r'\{\{IMG:(\w+)\}\}',lambda m:'data:image/jpeg;base64,'+base64.b64encode(open(f'{S}/{m.group(1)}.jpg','rb').read()).decode(),src)
 
