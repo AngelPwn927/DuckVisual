@@ -28,7 +28,12 @@ func main() {
 	weak := flag.Bool("weak", false, "weak PC graphics preset for a new instance (with -cli)")
 	join := flag.String("join", "", "server address to join right away (with -cli)")
 	world := flag.String("world", "", "singleplayer world folder to open right away, 1.20+ (with -cli)")
+	uninstall := flag.Bool("uninstall", false, "remove the installed launcher (Windows Settings → Apps uses this)")
 	flag.Parse()
+	if *uninstall {
+		uninstallApp()
+		return
+	}
 	if *cli {
 		os.Exit(runCLI(*name, *version, *loader, *weak, *join, *world))
 	}

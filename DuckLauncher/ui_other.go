@@ -11,3 +11,5 @@ func runUI() {
 	fmt.Println("The window UI is Windows-only. Use: ducklauncher -cli -name <Nickname>")
 	os.Exit(runCLI("", "", "", false, "", ""))
 }
+
+func uninstallApp() { fmt.Println("Uninstalling is only needed on Windows.") }

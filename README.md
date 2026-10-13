@@ -23,8 +23,9 @@
 
 ## ⚡ Как начать
 
-1. Скачай **[DuckLauncher.exe](https://github.com/AngelPwn927/DuckVisual/releases/latest/download/DuckLauncher.exe)** (Windows 10/11, без установки).
+1. Скачай **[DuckLauncher.exe](https://github.com/AngelPwn927/DuckVisual/releases/latest/download/DuckLauncher.exe)** (Windows 10/11).
 2. Запусти. Если Windows пишет «защитил ваш компьютер», нажми **«Подробнее» → «Выполнить в любом случае»**: у файла пока нет платной подписи.
+   Откроется установка: выбери папку и ярлыки (рабочий стол, меню «Пуск») или нажми «Запустить без установки».
 3. Введи ник и нажми **ИГРАТЬ**. Лаунчер сам скачает Java, Minecraft, Fabric, Duck Visual и моды для FPS.
 4. В игре нажми **Right Shift**, откроется меню Duck Visual.
 

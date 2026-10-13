@@ -56,6 +56,10 @@ func totalMemoryMB() int {
 }
 
 func runUI() {
+	cleanupOldExe()
+	if needSetup() && !runSetup() {
+		return
+	}
 	a := &app{cfg: core.LoadConfig()}
 	os.MkdirAll(core.BaseDir(), 0o755)
 	w := webview2.NewWithOptions(webview2.WebViewOptions{
