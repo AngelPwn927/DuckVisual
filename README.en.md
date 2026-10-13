@@ -66,7 +66,7 @@ The interface is in Russian; module names are in English.
 - **Installs everything:** the right Java, Minecraft, Fabric, Duck Visual.
 - **Any version** from 1.8.9 to the latest, Fabric or Vanilla, each in its own folder.
 - **17 performance mods:** Sodium, Lithium, ModernFix, FerriteCore, EntityCulling and more; each can be turned off.
-- **"Max FPS" graphics profile**, discrete GPU on laptops, faster startup from the second launch.
+- **"Max FPS" graphics profile**, discrete GPU on laptops, the modded game starts in about 20 seconds.
 - **Mods catalog** for Modrinth and CurseForge with automatic dependencies.
 - **Offline accounts** or **Ely.by** (skins).
 - **Duck Server** `n1.pg19.su:25795` is already in the server list.
