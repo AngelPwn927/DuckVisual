@@ -10,7 +10,7 @@ const (
 	// DuckVersion is the Minecraft version Duck Visual is built for.
 	DuckVersion     = "1.21.4"
 	LauncherName    = "DuckLauncher"
-	LauncherVersion = "1.5.0"
+	LauncherVersion = "1.5.1"
 )
 
 // BaseDir is where everything lives: %APPDATA%\.ducklauncher on Windows, ~/.ducklauncher elsewhere.

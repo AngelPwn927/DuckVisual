@@ -43,6 +43,7 @@ public class ModuleManager {
         add(new TotemCounter());
         add(new ItemPhysics());
         add(new MotionBlur());
+        add(new Saturation());
         add(new HandTint());
         add(new Hitmarker());
         add(new TargetCircle());

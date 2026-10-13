@@ -46,11 +46,11 @@ The interface is in Russian; module names are in English.
 </tr>
 </table>
 
-**61 modules**, all configurable and bindable:
+**62 modules**, all configurable and bindable:
 
 | Combat | Players & world | HUD | Style |
 |---|---|---|---|
-| TargetESP · Trajectories · CritIndicator · DamageIndicators · Hitmarker · HitParticles · KillEffects · TargetCircle | Nametags · HealthTags · GlowESP · BoxESP · Tracers · ChinaHat · JumpCircles · CustomSky · WorldParticles | Watermark · ArrayList · TargetHud · **Music** · Cooldowns · Potions · Keybinds · ArmorHud · TabList | 26 palettes · Montserrat font · Duck-styled Minecraft UI · Freelook · Zoom · MotionBlur |
+| TargetESP · Trajectories · CritIndicator · DamageIndicators · Hitmarker · HitParticles · KillEffects · TargetCircle | Nametags · HealthTags · GlowESP · BoxESP · Tracers · ChinaHat · JumpCircles · CustomSky · WorldParticles | Watermark · ArrayList · TargetHud · **Music** · Cooldowns · Potions · Keybinds · ArmorHud · TabList | 26 palettes · Montserrat font · Duck-styled Minecraft UI · Freelook · Zoom · MotionBlur · **Saturation** |
 
 🎵 **Music HUD** shows what is playing in your browser (YouTube, SoundCloud and more), Spotify and other players.
 

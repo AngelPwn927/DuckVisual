@@ -44,11 +44,11 @@
 </tr>
 </table>
 
-**61 функция**, все можно настроить и забиндить:
+**62 функции**, все можно настроить и забиндить:
 
 | Бой | Игроки и мир | HUD | Стиль |
 |---|---|---|---|
-| TargetESP · Trajectories · CritIndicator · DamageIndicators · Hitmarker · HitParticles · KillEffects · TargetCircle | Nametags · HealthTags · GlowESP · BoxESP · Tracers · ChinaHat · JumpCircles · CustomSky · WorldParticles | Watermark · ArrayList · TargetHud · **Music** · Cooldowns · Potions · Keybinds · ArmorHud · TabList | 26 палитр · шрифт Montserrat · меню Minecraft в стиле Duck · Freelook · Zoom · MotionBlur |
+| TargetESP · Trajectories · CritIndicator · DamageIndicators · Hitmarker · HitParticles · KillEffects · TargetCircle | Nametags · HealthTags · GlowESP · BoxESP · Tracers · ChinaHat · JumpCircles · CustomSky · WorldParticles | Watermark · ArrayList · TargetHud · **Music** · Cooldowns · Potions · Keybinds · ArmorHud · TabList | 26 палитр · шрифт Montserrat · меню Minecraft в стиле Duck · Freelook · Zoom · MotionBlur · **Saturation** |
 
 🎵 **Music HUD** показывает, что играет в браузере (YouTube, Яндекс Музыка, VK, SoundCloud), Spotify и других плеерах.
 

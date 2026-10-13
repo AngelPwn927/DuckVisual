@@ -28,8 +28,14 @@ public class GameRendererMixin {
     @Inject(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/render/GameRenderer;renderWorld(Lnet/minecraft/client/render/RenderTickCounter;)V", shift = At.Shift.AFTER))
     private void duck$motionBlur(RenderTickCounter counter, boolean tick, CallbackInfo ci) {
+        var sat = DuckVisual.modules().get(dev.duckvisual.module.impl.visual.Saturation.class);
+        if (sat.isEnabled() && mc$world()) sat.apply();
         var mb = DuckVisual.modules().get(dev.duckvisual.module.impl.visual.MotionBlur.class);
         if (mb.isEnabled()) mb.apply();
+    }
+
+    private static boolean mc$world() {
+        return net.minecraft.client.MinecraftClient.getInstance().world != null;
     }
 
     @Inject(method = "renderWorld", at = @At("HEAD"))
